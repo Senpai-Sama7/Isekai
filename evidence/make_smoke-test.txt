@@ -1,0 +1,408 @@
+Running smoke test for CSV viewer...
+cd packages/backend && npm run test:smoke
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> @isekai/backend@1.0.0 test:smoke
+> jest --testMatch='**/tests/smoke.test.ts'
+
+  console.error
+    Planner service error: AxiosError {
+      code: 'ECONNREFUSED',
+      errors: [
+        Error: connect ECONNREFUSED ::1:8001
+            at createConnectionError (node:net:1678:14)
+            at afterConnectMultiple (node:net:1708:16)
+            at TCPConnectWrap.callbackTrampoline (node:internal/async_hooks:130:17) {
+          errno: -111,
+          code: 'ECONNREFUSED',
+          syscall: 'connect',
+          address: '::1',
+          port: 8001
+        },
+        Error: connect ECONNREFUSED 127.0.0.1:8001
+            at createConnectionError (node:net:1678:14)
+            at afterConnectMultiple (node:net:1708:16)
+            at TCPConnectWrap.callbackTrampoline (node:internal/async_hooks:130:17) {
+          errno: -111,
+          code: 'ECONNREFUSED',
+          syscall: 'connect',
+          address: '127.0.0.1',
+          port: 8001
+        }
+      ],
+      message: 'Error',
+      name: 'AggregateError',
+      config: {
+        transitional: {
+          silentJSONParsing: true,
+          forcedJSONParsing: true,
+          clarifyTimeoutError: false
+        },
+        adapter: [ 'xhr', 'http', 'fetch' ],
+        transformRequest: [ [Function: transformRequest] ],
+        transformResponse: [ [Function: transformResponse] ],
+        timeout: 30000,
+        xsrfCookieName: 'XSRF-TOKEN',
+        xsrfHeaderName: 'X-XSRF-TOKEN',
+        maxContentLength: -1,
+        maxBodyLength: -1,
+        env: { FormData: [Function [FormData]], Blob: [class Blob] },
+        validateStatus: [Function: validateStatus],
+        headers: Object [AxiosHeaders] {
+          Accept: 'application/json, text/plain, */*',
+          'Content-Type': 'application/json',
+          'User-Agent': 'axios/1.12.2',
+          'Content-Length': '36',
+          'Accept-Encoding': 'gzip, compress, deflate, br'
+        },
+        method: 'post',
+        url: 'http://localhost:8001/analyze',
+        data: '{"prompt":"Create a CSV viewer app"}',
+        allowAbsoluteUrls: true
+      },
+      request: <ref *1> Writable {
+        _events: {
+          close: undefined,
+          error: [Function: handleRequestError],
+          prefinish: undefined,
+          finish: undefined,
+          drain: undefined,
+          response: [Function: handleResponse],
+          socket: [Array],
+          timeout: undefined,
+          abort: undefined
+        },
+        _writableState: WritableState {
+          highWaterMark: 65536,
+          length: 0,
+          corked: 0,
+          onwrite: [Function: bound onwrite],
+          writelen: 0,
+          bufferedIndex: 0,
+          pendingcb: 0,
+          [Symbol(kState)]: 17580812,
+          [Symbol(kBufferedValue)]: null
+        },
+        _maxListeners: undefined,
+        _options: {
+          maxRedirects: 21,
+          maxBodyLength: Infinity,
+          protocol: 'http:',
+          path: '/analyze',
+          method: 'POST',
+          headers: [Object: null prototype],
+          agents: [Object],
+          auth: undefined,
+          family: undefined,
+          beforeRedirect: [Function: dispatchBeforeRedirect],
+          beforeRedirects: [Object],
+          hostname: 'localhost',
+          port: '8001',
+          agent: undefined,
+          nativeProtocols: [Object],
+          pathname: '/analyze'
+        },
+        _ended: false,
+        _ending: true,
+        _redirectCount: 0,
+        _redirects: [],
+        _requestBodyLength: 36,
+        _requestBodyBuffers: [ [Object] ],
+        _eventsCount: 3,
+        _onNativeResponse: [Function (anonymous)],
+        _currentRequest: ClientRequest {
+          _events: [Object: null prototype],
+          _eventsCount: 7,
+          _maxListeners: undefined,
+          outputData: [],
+          outputSize: 0,
+          writable: true,
+          destroyed: false,
+          _last: false,
+          chunkedEncoding: false,
+          shouldKeepAlive: true,
+          maxRequestsOnConnectionReached: false,
+          _defaultKeepAlive: true,
+          useChunkedEncodingByDefault: true,
+          sendDate: false,
+          _removedConnection: false,
+          _removedContLen: false,
+          _removedTE: false,
+          strictContentLength: false,
+          _contentLength: 36,
+          _hasBody: true,
+          _trailer: '',
+          finished: false,
+          _headerSent: true,
+          _closed: false,
+          _header: 'POST /analyze HTTP/1.1\r\n' +
+            'Accept: application/json, text/plain, */*\r\n' +
+            'Content-Type: application/json\r\n' +
+            'User-Agent: axios/1.12.2\r\n' +
+            'Content-Length: 36\r\n' +
+            'Accept-Encoding: gzip, compress, deflate, br\r\n' +
+            'Host: localhost:8001\r\n' +
+            'Connection: keep-alive\r\n' +
+            '\r\n',
+          _keepAliveTimeout: 0,
+          _onPendingData: [Function: nop],
+          agent: [Agent],
+          socketPath: undefined,
+          method: 'POST',
+          maxHeaderSize: undefined,
+          insecureHTTPParser: undefined,
+          joinDuplicateHeaders: undefined,
+          path: '/analyze',
+          _ended: false,
+          res: null,
+          aborted: false,
+          timeoutCb: [Function: emitRequestTimeout],
+          upgradeOrConnect: false,
+          parser: null,
+          maxHeadersCount: null,
+          reusedSocket: false,
+          host: 'localhost',
+          protocol: 'http:',
+          _redirectable: [Circular *1],
+          [Symbol(shapeMode)]: false,
+          [Symbol(kCapture)]: false,
+          [Symbol(kBytesWritten)]: 0,
+          [Symbol(kNeedDrain)]: false,
+          [Symbol(corked)]: 0,
+          [Symbol(kChunkedBuffer)]: [],
+          [Symbol(kChunkedLength)]: 0,
+          [Symbol(kSocket)]: [Socket],
+          [Symbol(kOutHeaders)]: [Object: null prototype],
+          [Symbol(errored)]: null,
+          [Symbol(kHighWaterMark)]: 65536,
+          [Symbol(kRejectNonStandardBodyWrites)]: false,
+          [Symbol(kUniqueHeaders)]: null
+        },
+        _currentUrl: 'http://localhost:8001/analyze',
+        _timeout: null,
+        [Symbol(shapeMode)]: true,
+        [Symbol(kCapture)]: false
+      }
+    }
+
+      13 |       return response.data;
+      14 |     } catch (error) {
+    > 15 |       console.error('Planner service error:', error);
+         |               ^
+      16 |       
+      17 |       // Fallback: return mock data for CSV viewer
+      18 |       if (prompt.toLowerCase().includes('csv')) {
+
+      at PlannerService.analyze (src/services/plannerService.ts:15:15)
+      at AppController.generateApp (src/controllers/appController.ts:37:22)
+      at src/routes/apps.ts:24:17
+
+  console.error
+    Sandbox service error: AxiosError {
+      code: 'ECONNREFUSED',
+      errors: [
+        Error: connect ECONNREFUSED ::1:8002
+            at createConnectionError (node:net:1678:14)
+            at afterConnectMultiple (node:net:1708:16)
+            at TCPConnectWrap.callbackTrampoline (node:internal/async_hooks:130:17) {
+          errno: -111,
+          code: 'ECONNREFUSED',
+          syscall: 'connect',
+          address: '::1',
+          port: 8002
+        },
+        Error: connect ECONNREFUSED 127.0.0.1:8002
+            at createConnectionError (node:net:1678:14)
+            at afterConnectMultiple (node:net:1708:16)
+            at TCPConnectWrap.callbackTrampoline (node:internal/async_hooks:130:17) {
+          errno: -111,
+          code: 'ECONNREFUSED',
+          syscall: 'connect',
+          address: '127.0.0.1',
+          port: 8002
+        }
+      ],
+      message: 'Error',
+      name: 'AggregateError',
+      config: {
+        transitional: {
+          silentJSONParsing: true,
+          forcedJSONParsing: true,
+          clarifyTimeoutError: false
+        },
+        adapter: [ 'xhr', 'http', 'fetch' ],
+        transformRequest: [ [Function: transformRequest] ],
+        transformResponse: [ [Function: transformResponse] ],
+        timeout: 60000,
+        xsrfCookieName: 'XSRF-TOKEN',
+        xsrfHeaderName: 'X-XSRF-TOKEN',
+        maxContentLength: -1,
+        maxBodyLength: -1,
+        env: { FormData: [Function [FormData]], Blob: [class Blob] },
+        validateStatus: [Function: validateStatus],
+        headers: Object [AxiosHeaders] {
+          Accept: 'application/json, text/plain, */*',
+          'Content-Type': 'application/json',
+          'User-Agent': 'axios/1.12.2',
+          'Content-Length': '3370',
+          'Accept-Encoding': 'gzip, compress, deflate, br'
+        },
+        method: 'post',
+        url: 'http://localhost:8002/execute',
+        data: `{"appId":"b612a4d6-a6ac-465a-b795-81ceb4bcd173","files":{"package.json":"{\\n  \\"name\\": \\"csv-viewer\\",\\n  \\"version\\": \\"1.0.0\\",\\n  \\"dependencies\\": {\\n    \\"react\\": \\"^18.2.0\\",\\n    \\"react-dom\\": \\"^18.2.0\\",\\n    \\"papaparse\\": \\"^5.4.1\\"\\n  },\\n  \\"scripts\\": {\\n    \\"start\\": \\"react-scripts start\\",\\n    \\"build\\": \\"react-scripts build\\"\\n  }\\n}","public/index.html":"<!DOCTYPE html>\\n<html lang=\\"en\\">\\n<head>\\n  <meta charset=\\"utf-8\\" />\\n  <meta name=\\"viewport\\" content=\\"width=device-width, initial-scale=1\\" />\\n  <title>CSV Viewer</title>\\n</head>\\n<body>\\n  <div id=\\"root\\"></div>\\n</body>\\n</html>","src/index.js":"import React from 'react';\\nimport ReactDOM from 'react-dom/client';\\nimport App from './App';\\n\\nconst root = ReactDOM.createRoot(document.getElementById('root'));\\nroot.render(<App />);","src/App.js":"import React, { useState } from 'react';\\nimport Papa from 'papaparse';\\n\\nfunction App() {\\n  const [data, setData] = useState([]);\\n  const [headers, setHeaders] = useState([]);\\n  const [search, setSearch] = useState('');\\n\\n  const handleFileUpload = (event) => {\\n    const file = event.target.files[0];\\n    if (file) {\\n      Papa.parse(file, {\\n        header: true,\\n        complete: (results) => {\\n          if (results.data.length > 0) {\\n            setHeaders(Object.keys(results.data[0]));\\n            setData(results.data);\\n          }\\n        }\\n      });\\n    }\\n  };\\n\\n  const filteredData = data.filter(row =>\\n    Object.values(row).some(val =>\\n      String(val).toLowerCase().includes(search.toLowerCase())\\n    )\\n  );\\n\\n  return (\\n    <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif' }}>\\n      <h1>CSV Viewer</h1>\\n      <div style={{ marginBottom: '20px' }}>\\n        <input\\n          type=\\"file\\"\\n          accept=\\".csv\\"\\n          onChange={handleFileUpload}\\n          style={{ marginRight: '10px' }}\\n        />\\n        {data.length > 0 && (\\n          <input\\n            type=\\"text\\"\\n            placeholder=\\"Search...\\"\\n            value={search}\\n            onChange={(e) => setSearch(e.target.value)}\\n            style={{ padding: '5px', width: '200px' }}\\n          />\\n        )}\\n      </div>\\n      {filteredData.length > 0 && (\\n        <table style={{ \\n          width: '100%', \\n          borderCollapse: 'collapse',\\n          border: '1px solid #ddd'\\n        }}>\\n          <thead>\\n            <tr style={{ backgroundColor: '#f2f2f2' }}>\\n              {headers.map((header, i) => (\\n                <th key={i} style={{ \\n                  border: '1px solid #ddd',\\n                  padding: '8px',\\n                  textAlign: 'left'\\n                }}>\\n                  {header}\\n                </th>\\n              ))}\\n            </tr>\\n          </thead>\\n          <tbody>\\n            {filteredData.map((row, i) => (\\n              <tr key={i}>\\n                {headers.map((header, j) => (\\n                  <td key={j} style={{ \\n                    border: '1px solid #ddd',\\n                    padding: '8px'\\n                  }}>\\n                    {row[header]}\\n                  </td>\\n                ))}\\n              </tr>\\n            ))}\\n          </tbody>\\n        </table>\\n      )}\\n      {data.length === 0 && <p>Upload a CSV file to view its contents</p>}\\n    </div>\\n  );\\n}\\n\\nexport default App;"}}`,
+        allowAbsoluteUrls: true
+      },
+      request: <ref *1> Writable {
+        _events: {
+          close: undefined,
+          error: [Function: handleRequestError],
+          prefinish: undefined,
+          finish: undefined,
+          drain: undefined,
+          response: [Function: handleResponse],
+          socket: [Array],
+          timeout: undefined,
+          abort: undefined
+        },
+        _writableState: WritableState {
+          highWaterMark: 65536,
+          length: 0,
+          corked: 0,
+          onwrite: [Function: bound onwrite],
+          writelen: 0,
+          bufferedIndex: 0,
+          pendingcb: 0,
+          [Symbol(kState)]: 17580812,
+          [Symbol(kBufferedValue)]: null
+        },
+        _maxListeners: undefined,
+        _options: {
+          maxRedirects: 21,
+          maxBodyLength: Infinity,
+          protocol: 'http:',
+          path: '/execute',
+          method: 'POST',
+          headers: [Object: null prototype],
+          agents: [Object],
+          auth: undefined,
+          family: undefined,
+          beforeRedirect: [Function: dispatchBeforeRedirect],
+          beforeRedirects: [Object],
+          hostname: 'localhost',
+          port: '8002',
+          agent: undefined,
+          nativeProtocols: [Object],
+          pathname: '/execute'
+        },
+        _ended: false,
+        _ending: true,
+        _redirectCount: 0,
+        _redirects: [],
+        _requestBodyLength: 3370,
+        _requestBodyBuffers: [ [Object] ],
+        _eventsCount: 3,
+        _onNativeResponse: [Function (anonymous)],
+        _currentRequest: ClientRequest {
+          _events: [Object: null prototype],
+          _eventsCount: 7,
+          _maxListeners: undefined,
+          outputData: [],
+          outputSize: 0,
+          writable: true,
+          destroyed: false,
+          _last: false,
+          chunkedEncoding: false,
+          shouldKeepAlive: true,
+          maxRequestsOnConnectionReached: false,
+          _defaultKeepAlive: true,
+          useChunkedEncodingByDefault: true,
+          sendDate: false,
+          _removedConnection: false,
+          _removedContLen: false,
+          _removedTE: false,
+          strictContentLength: false,
+          _contentLength: 3370,
+          _hasBody: true,
+          _trailer: '',
+          finished: false,
+          _headerSent: true,
+          _closed: false,
+          _header: 'POST /execute HTTP/1.1\r\n' +
+            'Accept: application/json, text/plain, */*\r\n' +
+            'Content-Type: application/json\r\n' +
+            'User-Agent: axios/1.12.2\r\n' +
+            'Content-Length: 3370\r\n' +
+            'Accept-Encoding: gzip, compress, deflate, br\r\n' +
+            'Host: localhost:8002\r\n' +
+            'Connection: keep-alive\r\n' +
+            '\r\n',
+          _keepAliveTimeout: 0,
+          _onPendingData: [Function: nop],
+          agent: [Agent],
+          socketPath: undefined,
+          method: 'POST',
+          maxHeaderSize: undefined,
+          insecureHTTPParser: undefined,
+          joinDuplicateHeaders: undefined,
+          path: '/execute',
+          _ended: false,
+          res: null,
+          aborted: false,
+          timeoutCb: [Function: emitRequestTimeout],
+          upgradeOrConnect: false,
+          parser: null,
+          maxHeadersCount: null,
+          reusedSocket: false,
+          host: 'localhost',
+          protocol: 'http:',
+          _redirectable: [Circular *1],
+          [Symbol(shapeMode)]: false,
+          [Symbol(kCapture)]: false,
+          [Symbol(kBytesWritten)]: 0,
+          [Symbol(kNeedDrain)]: false,
+          [Symbol(corked)]: 0,
+          [Symbol(kChunkedBuffer)]: [],
+          [Symbol(kChunkedLength)]: 0,
+          [Symbol(kSocket)]: [Socket],
+          [Symbol(kOutHeaders)]: [Object: null prototype],
+          [Symbol(errored)]: null,
+          [Symbol(kHighWaterMark)]: 65536,
+          [Symbol(kRejectNonStandardBodyWrites)]: false,
+          [Symbol(kUniqueHeaders)]: null
+        },
+        _currentUrl: 'http://localhost:8002/execute',
+        _timeout: null,
+        [Symbol(shapeMode)]: true,
+        [Symbol(kCapture)]: false
+      }
+    }
+
+      13 |       return response.data;
+      14 |     } catch (error) {
+    > 15 |       console.error('Sandbox service error:', error);
+         |               ^
+      16 |       
+      17 |       // Return mock data if sandbox is not available
+      18 |       return {
+
+      at SandboxService.execute (src/services/sandboxService.ts:15:15)
+      at AppController.generateApp (src/controllers/appController.ts:40:29)
+      at src/routes/apps.ts:24:17
+
+PASS tests/smoke.test.ts
+  CSV Viewer Smoke Test
+    ✓ should generate a CSV viewer app from prompt (215 ms)
+    ✓ should retrieve the generated app (8 ms)
+    ✓ should have essential CSV viewer files (7 ms)
+    ✓ should list apps including the CSV viewer (7 ms)
+    ✓ should check health endpoint (13 ms)
+
+Test Suites: 1 passed, 1 total
+Tests:       5 passed, 5 total
+Snapshots:   0 total
+Time:        3.673 s, estimated 6 s
+Ran all test suites.
+Jest did not exit one second after the test run has completed.
+
+'This usually means that there are asynchronous operations that weren't stopped in your tests. Consider running Jest with `--detectOpenHandles` to troubleshoot this issue.
+make: *** [Makefile:41: smoke-test] Interrupt

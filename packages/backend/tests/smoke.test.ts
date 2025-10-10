@@ -42,12 +42,13 @@ describe('CSV Viewer Smoke Test', () => {
       .expect(200);
 
     const files = response.body.code.files;
-    
+
     expect(files).toBeDefined();
-    expect(files['package.json']).toBeDefined();
-    expect(files['src/App.js']).toBeDefined();
-    expect(files['src/App.js']).toContain('Papa.parse');
-    expect(files['src/App.js']).toContain('CSV');
+    expect(files['index.html']).toBeDefined();
+    expect(files['styles.css']).toBeDefined();
+    expect(files['app.js']).toBeDefined();
+    expect(files['index.html']).toContain('CSV Viewer');
+    expect(files['app.js']).toContain('FileReader');
   });
 
   it('should list apps including the CSV viewer', async () => {

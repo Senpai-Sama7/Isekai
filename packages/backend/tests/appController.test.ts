@@ -28,7 +28,10 @@ describe('AppController', () => {
       getApp: jest.fn(),
       updateApp: jest.fn(),
       deleteApp: jest.fn(),
-      listApps: jest.fn()
+      listApps: jest.fn(),
+      saveSuggestions: jest.fn(),
+      getSuggestion: jest.fn(),
+      clearSuggestions: jest.fn()
     } as any;
 
     mockPlannerService = {
@@ -439,8 +442,8 @@ describe('AppController', () => {
       };
 
       const mockSuggestions = [
-        { id: 'sug-1', description: 'Add sorting' },
-        { id: 'sug-2', description: 'Add filtering' }
+        { id: 'sug-1', title: 'Add sorting', description: 'Add sorting', changes: { 'app.js': 'code' } },
+        { id: 'sug-2', title: 'Add filtering', description: 'Add filtering', changes: { 'styles.css': 'styles' } }
       ];
 
       mockDb.getApp.mockReturnValue(mockApp);
@@ -461,7 +464,16 @@ describe('AppController', () => {
         currentCode: { files: {} }
       });
 
-      expect(result).toEqual(mockSuggestions);
+      expect(mockDb.saveSuggestions).toHaveBeenCalledWith(
+        'app-123',
+        expect.arrayContaining([
+          expect.objectContaining({ id: 'sug-1', appId: 'app-123', changes: { 'app.js': 'code' } }),
+          expect.objectContaining({ id: 'sug-2', appId: 'app-123', changes: { 'styles.css': 'styles' } })
+        ])
+      );
+
+      expect(result).toHaveLength(2);
+      expect(result[0]).toHaveProperty('createdAt');
     });
 
     it('should return empty array for non-existent app', async () => {
@@ -471,6 +483,7 @@ describe('AppController', () => {
 
       expect(result).toEqual([]);
       expect(mockPlannerService.infer).not.toHaveBeenCalled();
+      expect(mockDb.saveSuggestions).not.toHaveBeenCalled();
     });
 
     it('should return empty array on inference error', async () => {
@@ -489,6 +502,7 @@ describe('AppController', () => {
       const result = await controller.trackAction('app-123', 'click', 'button', {});
 
       expect(result).toEqual([]);
+      expect(mockDb.saveSuggestions).not.toHaveBeenCalled();
     });
 
     it('should handle missing suggestions in response', async () => {
@@ -507,6 +521,7 @@ describe('AppController', () => {
       const result = await controller.trackAction('app-123', 'click', 'button', {});
 
       expect(result).toEqual([]);
+      expect(mockDb.saveSuggestions).toHaveBeenCalledWith('app-123', []);
     });
   });
 
@@ -517,18 +532,30 @@ describe('AppController', () => {
         name: 'Test',
         prompt: 'Test',
         status: 'running' as const,
-        code: '{"files":{}}',
+        code: '{"files":{"app.js":"console.log(\\"hi\\");"}}',
         metadata: '{"context":{}}',
         previewUrl: 'http://localhost:9000',
         createdAt: '2023-01-01',
         updatedAt: '2023-01-01'
       };
 
-      mockDb.getApp.mockReturnValue(mockApp);
+      mockDb.getApp.mockReturnValueOnce(mockApp).mockReturnValue({ ...mockApp, code: '{"files":{"app.js":"updated"}}' });
+      mockDb.getSuggestion.mockReturnValue({
+        id: 'sug-1',
+        appId: 'app-123',
+        title: 'Update code',
+        description: 'Improve logging',
+        changes: { 'app.js': 'updated' },
+        createdAt: '2023-01-01T00:00:00.000Z'
+      });
+      mockSandboxService.update.mockResolvedValue({ status: 'updated' });
+      mockDb.updateApp.mockReturnValue({ ...mockApp, code: '{"files":{"app.js":"updated"}}' });
 
       const result = await controller.applySuggestion('app-123', 'sug-1');
 
       expect(result).toEqual(expect.objectContaining({ id: 'app-123' }));
+      expect(mockSandboxService.update).toHaveBeenCalledWith('app-123', { 'app.js': 'updated' });
+      expect(mockDb.clearSuggestions).toHaveBeenCalledWith('app-123');
     });
   });
 

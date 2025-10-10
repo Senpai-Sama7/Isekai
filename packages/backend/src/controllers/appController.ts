@@ -1,5 +1,6 @@
+import { randomUUID } from 'crypto';
 import { v4 as uuidv4 } from 'uuid';
-import { Database, App } from '../db/database';
+import { Database, App, SuggestionRecord } from '../db/database';
 import { PlannerService } from '../services/plannerService';
 import { SandboxService } from '../services/sandboxService';
 
@@ -142,7 +143,12 @@ export class AppController {
     return this.db.deleteApp(appId);
   }
 
-  async trackAction(appId: string, action: string, target: string, data: any): Promise<any[]> {
+  async trackAction(
+    appId: string,
+    action: string,
+    target: string,
+    data: any
+  ): Promise<SuggestionRecord[]> {
     const app = this.db.getApp(appId);
     if (!app) return [];
 
@@ -155,7 +161,27 @@ export class AppController {
         currentCode: JSON.parse(app.code)
       });
 
-      return result.suggestions || [];
+      const suggestions = (result.suggestions || []).map((suggestion: any) => {
+        const id = suggestion.id || randomUUID();
+        const title = suggestion.title || 'Suggestion';
+        const description = suggestion.description || 'No description provided';
+        const changes = suggestion.changes || {};
+
+        const record: SuggestionRecord = {
+          id,
+          appId,
+          title,
+          description,
+          changes,
+          createdAt: new Date().toISOString()
+        };
+
+        return record;
+      });
+
+      this.db.saveSuggestions(appId, suggestions);
+
+      return suggestions;
     } catch (error) {
       console.error('Error inferring from action:', error);
       return [];
@@ -163,8 +189,24 @@ export class AppController {
   }
 
   async applySuggestion(appId: string, suggestionId: string): Promise<any | null> {
-    // In a real implementation, we'd store suggestions and retrieve them
-    // For now, this is a placeholder
+    const suggestion = this.db.getSuggestion(appId, suggestionId);
+    const app = this.db.getApp(appId);
+
+    if (!suggestion || !app) {
+      return null;
+    }
+
+    const currentCode = JSON.parse(app.code).files || {};
+    const updatedFiles = { ...currentCode, ...suggestion.changes };
+
+    await this.sandboxService.update(appId, updatedFiles);
+
+    this.db.updateApp(appId, {
+      code: JSON.stringify({ files: updatedFiles })
+    });
+
+    this.db.clearSuggestions(appId);
+
     return this.getApp(appId);
   }
 

@@ -1,0 +1,26 @@
+[
+  {
+    "id": "F1",
+    "feature": "Backend CSV app generation flow",
+    "command": "make smoke-test",
+    "expected": "Jest smoke suite passes generating CSV viewer app",
+    "status": "VERIFIED",
+    "evidence": ["evidence/make_smoke-test.txt"]
+  },
+  {
+    "id": "F2",
+    "feature": "Planner service health endpoint responds",
+    "command": "curl -s -o '%{http_code}' http://localhost:8001/health",
+    "expected": "HTTP 200 with planner status payload",
+    "status": "UNVERIFIED",
+    "evidence": ["evidence/curl_planner_health.txt"]
+  },
+  {
+    "id": "F3",
+    "feature": "Sandbox service health endpoint responds",
+    "command": "curl -s -o '%{http_code}' http://localhost:8002/health",
+    "expected": "HTTP 200 with sandbox status payload",
+    "status": "UNVERIFIED",
+    "evidence": ["evidence/curl_sandbox_health.txt"]
+  }
+]
