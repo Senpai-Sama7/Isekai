@@ -833,7 +833,7 @@ function filterRows(query) {
   }
 
   private injectAnalytics(source: string): string {
-    if (source.includes('Analytics]')) {
+    if (source.includes('[Analytics]')) {
       return source;
     }
 
