@@ -43,7 +43,7 @@ const plannerRateLimit = rateLimit({
 // Body parser with size limits
 app.use(express.json({ limit: '5mb' }));
 
-app.post('/analyze', plannerRateLimit, validateAnalyze, async (req: Request, res: Response) => {
+app.post('/analyze', plannerRateLimit as any, validateAnalyze, async (req: Request, res: Response) => {
   try {
     const { prompt, context } = req.body;
 

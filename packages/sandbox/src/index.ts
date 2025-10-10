@@ -46,7 +46,7 @@ const executeRateLimit = rateLimit({
 // Body parser with size limits
 app.use(express.json({ limit: '10mb' }));
 
-app.post('/execute', executeRateLimit, validateExecute, async (req: Request, res: Response) => {
+app.post('/execute', executeRateLimit as any, validateExecute, async (req: Request, res: Response) => {
   try {
     const { appId, files, dependencies, config } = req.body;
     
