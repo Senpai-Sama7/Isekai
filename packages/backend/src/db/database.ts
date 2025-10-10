@@ -24,7 +24,7 @@ export class Database {
     if (!existsSync(dataDir)) {
       mkdirSync(dataDir, { recursive: true });
     }
-    const dbPath = process.env.DB_PATH || join(dataDir, 'dream.db');
+    const dbPath = process.env.DB_PATH || join(dataDir, 'isekai.db');
     this.db = new BetterSqlite3(dbPath);
     
     // Enable WAL mode for better concurrency

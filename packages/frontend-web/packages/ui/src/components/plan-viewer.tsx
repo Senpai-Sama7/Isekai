@@ -3,7 +3,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Badge } from './ui/badge';
 import { Progress } from './ui/progress';
-import { Plan, PlanStep } from '@imagine/types';
+import { Plan, PlanStep } from '@isekai/types';
 import { formatDuration, formatTimestamp, getStatusColor, getStepIcon } from '@/lib/utils';
 
 interface PlanViewerProps {

@@ -7,7 +7,7 @@
 ```yaml
 openapi: 3.0.0
 info:
-  title: Dream Backend API
+  title: Isekai Backend API
   version: 1.0.0
   description: API for managing AI-generated applications
 

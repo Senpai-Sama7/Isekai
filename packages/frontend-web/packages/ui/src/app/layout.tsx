@@ -5,7 +5,7 @@ import './globals.css'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'Imagine Platform',
+  title: 'Isekai Platform',
   description: 'Transform natural language into runnable applications',
 }
 

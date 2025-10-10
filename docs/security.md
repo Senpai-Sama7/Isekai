@@ -2,7 +2,7 @@
 
 ## Security Improvements Implemented
 
-This document describes the security measures implemented in the Dream application.
+This document describes the security measures implemented in the Isekai application.
 
 ### Security Headers (Helmet)
 

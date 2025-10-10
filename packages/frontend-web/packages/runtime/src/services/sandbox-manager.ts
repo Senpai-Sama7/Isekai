@@ -2,7 +2,7 @@ import Docker from 'dockerode';
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import * as tmp from 'tmp';
-import { GeneratedApp } from '@imagine/types';
+import { GeneratedApp } from '@isekai/types';
 import { winstonLogger } from '../utils/logger';
 
 export class SandboxManager {
@@ -27,13 +27,13 @@ export class SandboxManager {
     await this.createDockerfile(appDir, app);
 
     // Build Docker image
-    const imageName = `imagine-app-${sandboxId}`;
+    const imageName = `isekai-app-${sandboxId}`;
     await this.buildDockerImage(appDir, imageName);
 
     // Create and start container
     const container = await this.docker.createContainer({
       Image: imageName,
-      name: `imagine-sandbox-${sandboxId}`,
+      name: `isekai-sandbox-${sandboxId}`,
       WorkingDir: '/app',
       Env: [
         'NODE_ENV=production',

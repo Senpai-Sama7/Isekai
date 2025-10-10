@@ -32,15 +32,15 @@ make smoke-test
 ```mermaid
 graph TB
     User[User]
-    Dream[Dream AI Agent System]
+    Isekai[Isekai AI Agent System]
     AI[AI/LLM Service]
     
-    User -->|Natural Language Commands| Dream
-    Dream -->|Generated Apps| User
-    Dream -->|AI Queries| AI
-    AI -->|Code Generation| Dream
+    User -->|Natural Language Commands| Isekai
+    Isekai -->|Generated Apps| User
+    Isekai -->|AI Queries| AI
+    AI -->|Code Generation| Isekai
     
-    style Dream fill:#4a90e2,stroke:#2e5c8a,stroke-width:2px,color:#fff
+    style Isekai fill:#4a90e2,stroke:#2e5c8a,stroke-width:2px,color:#fff
     style User fill:#95de64,stroke:#52c41a,stroke-width:2px
     style AI fill:#ffc069,stroke:#fa8c16,stroke-width:2px
 ```
@@ -51,7 +51,7 @@ graph TB
 graph TB
     User[User<br/>Web Browser]
     
-    subgraph Dream System
+    subgraph Isekai System
         Frontend[Frontend<br/>React SPA<br/>Port 3000]
         Backend[Backend API<br/>Express.js<br/>Port 8000]
         Planner[Planner Service<br/>NLP/AI<br/>Port 8001]
@@ -195,7 +195,7 @@ The sandbox runtime provides:
 
 ### Project Structure
 ```
-dream/
+isekai/
 ├── packages/
 │   ├── frontend/      # React UI
 │   ├── backend/       # Express API server

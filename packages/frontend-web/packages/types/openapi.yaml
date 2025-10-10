@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  title: Imagine Platform API
+  title: Isekai Platform API
   description: Natural language to runnable applications platform
   version: 1.0.0
 servers:

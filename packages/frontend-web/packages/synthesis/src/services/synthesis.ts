@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 import ZAI from 'z-ai-web-dev-sdk';
-import { GeneratedApp, PerceptionResult, UIComponent } from '@imagine/types';
+import { GeneratedApp, PerceptionResult, UIComponent } from '@isekai/types';
 import { winstonLogger } from '../utils/logger';
 import { CodeTemplateManager } from './code-template-manager';
 import { CodeValidator } from './code-validator';

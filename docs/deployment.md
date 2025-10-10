@@ -111,7 +111,7 @@ services:
       - "8002:8002"
       - "9000-9100:9000-9100"
     volumes:
-      - ./runtime:/var/lib/dream/apps
+      - ./runtime:/var/lib/isekai/apps
     privileged: true
 
   frontend:
@@ -135,27 +135,27 @@ Example Kubernetes manifests in `k8s/`:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: dream-backend
+  name: isekai-backend
 spec:
   replicas: 3
   selector:
     matchLabels:
-      app: dream-backend
+      app: isekai-backend
   template:
     metadata:
       labels:
-        app: dream-backend
+        app: isekai-backend
     spec:
       containers:
       - name: backend
-        image: dream/backend:latest
+        image: isekai/backend:latest
         ports:
         - containerPort: 8000
         env:
         - name: PLANNER_URL
-          value: "http://dream-planner:8001"
+          value: "http://isekai-planner:8001"
         - name: SANDBOX_URL
-          value: "http://dream-sandbox:8002"
+          value: "http://isekai-sandbox:8002"
 ```
 
 ### Cloud Deployment Options
@@ -223,7 +223,7 @@ Implement Prometheus metrics:
 #### Database Backup
 ```bash
 # Backup SQLite database
-sqlite3 /data/dream.db ".backup /backups/dream-$(date +%Y%m%d).db"
+sqlite3 /data/isekai.db ".backup /backups/isekai-$(date +%Y%m%d).db"
 ```
 
 #### App Artifacts

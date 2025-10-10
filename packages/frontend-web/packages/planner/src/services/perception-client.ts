@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { PerceptionResult } from '@imagine/types';
+import { PerceptionResult } from '@isekai/types';
 import { winstonLogger } from '../utils/logger';
 
 export class PerceptionClient {

@@ -1,6 +1,6 @@
 # Example Usage
 
-This document provides examples of how to use the Dream AI Agent system.
+This document provides examples of how to use the Isekai AI Agent system.
 
 ## Starting the System
 
@@ -186,11 +186,11 @@ cd packages/sandbox && npm run dev
 
 ### Database
 
-SQLite database is stored at `packages/data/dream.db` (auto-created on first run).
+SQLite database is stored at `packages/data/isekai.db` (auto-created on first run).
 
 To inspect:
 ```bash
-sqlite3 packages/data/dream.db
+sqlite3 packages/data/isekai.db
 .tables
 SELECT * FROM apps;
 ```

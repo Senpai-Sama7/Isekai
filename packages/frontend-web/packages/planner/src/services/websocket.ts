@@ -1,6 +1,6 @@
 import { WebSocketServer, WebSocket } from 'ws';
 import { winstonLogger } from '../utils/logger';
-import { WebSocketMessage } from '@imagine/types';
+import { WebSocketMessage } from '@isekai/types';
 
 export class WebSocketService {
   private wss: WebSocketServer | null = null;
@@ -26,7 +26,7 @@ export class WebSocketService {
       // Send welcome message
       ws.send(JSON.stringify({
         type: 'connected',
-        data: { message: 'Connected to Imagine Platform' },
+        data: { message: 'Connected to Isekai Platform' },
         timestamp: new Date().toISOString()
       }));
     });
