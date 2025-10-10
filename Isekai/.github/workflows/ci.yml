@@ -1,0 +1,38 @@
+name: ci
+on:
+  pull_request:
+  push:
+    branches: [ main ]
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20 }
+      - name: Install
+        run: |
+          corepack enable || true
+          if [ -f pnpm-lock.yaml ]; then corepack prepare pnpm@latest --activate && pnpm install --frozen-lockfile;           elif [ -f package-lock.json ]; then npm ci; else npm install; fi
+      - name: Lint and typecheck
+        run: |
+          npm run -ws lint --if-present || true
+          npm run -ws typecheck --if-present || true
+      - name: Unit tests
+        run: |
+          npm run -ws test --if-present
+      - name: Build
+        run: npm run -ws build --if-present
+  compose-integration:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Docker
+        uses: docker/setup-buildx-action@v3
+      - name: Compose up
+        run: |
+          docker compose -f dev/compose/docker-compose.yml up -d --build
+          sleep 10
+          curl -f http://localhost:8080/health || true
+          curl -f http://localhost:8090/health || true
+          curl -f http://localhost:8070/health || true

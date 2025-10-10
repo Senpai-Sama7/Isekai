@@ -1,0 +1,10 @@
+version: v1
+plugins:
+  - name: es
+    out: gen/ts
+    opt:
+      - target=ts
+  - name: connect-es
+    out: gen/ts
+    opt:
+      - target=ts

@@ -1,0 +1,30 @@
+syntax = "proto3";
+package dream.v1;
+
+message RequestMeta {
+  string request_id = 1;
+  string user_id    = 2;
+  int64  ts_unix_ms = 3;
+}
+
+message PlanInput {
+  RequestMeta meta = 1;
+  string goal      = 2;
+  string context   = 3;
+}
+
+message PlanStep {
+  string id      = 1;
+  string action  = 2;
+  string tool    = 3;
+  string payload = 4;
+}
+
+message PlanOutput {
+  RequestMeta       meta  = 1;
+  repeated PlanStep steps = 2;
+}
+
+service Planner {
+  rpc Plan(PlanInput) returns (PlanOutput);
+}

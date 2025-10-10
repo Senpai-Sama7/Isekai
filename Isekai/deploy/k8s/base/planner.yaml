@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: planner
+  namespace: dream
+  labels: { app: planner }
+spec:
+  replicas: 2
+  selector: { matchLabels: { app: planner } }
+  template:
+    metadata: { labels: { app: planner } }
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile: { type: RuntimeDefault }
+      containers:
+        - name: planner
+          image: ghcr.io/your-org/planner:latest
+          ports: [ { containerPort: 8090 } ]
+          readinessProbe:
+            httpGet: { path: /health, port: 8090 }
+          livenessProbe:
+            httpGet: { path: /health, port: 8090 }
+          resources:
+            requests: { cpu: "100m", memory: "256Mi" }
+            limits:   { cpu: "500m", memory: "512Mi" }
+          securityContext:
+            readOnlyRootFilesystem: true
+            allowPrivilegeEscalation: false
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: planner
+  namespace: dream
+spec:
+  selector: { app: planner }
+  ports:
+    - port: 8090
+      targetPort: 8090
+      protocol: TCP

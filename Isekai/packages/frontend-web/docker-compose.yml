@@ -1,0 +1,172 @@
+version: '3.8'
+
+services:
+  # Perception Service
+  perception:
+    build:
+      context: ./packages/perception
+      dockerfile: Dockerfile
+    ports:
+      - "3002:3002"
+    environment:
+      - NODE_ENV=production
+      - LOG_LEVEL=info
+    networks:
+      - imagine-network
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    cap_add:
+      - CHOWN
+      - DAC_OVERRIDE
+
+  # Planner Service
+  planner:
+    build:
+      context: ./packages/planner
+      dockerfile: Dockerfile
+    ports:
+      - "3003:3003"
+    environment:
+      - NODE_ENV=production
+      - LOG_LEVEL=info
+      - PERCEPTION_SERVICE_URL=http://perception:3002
+      - SYNTHESIS_SERVICE_URL=http://synthesis:3004
+      - RUNTIME_SERVICE_URL=http://runtime:3005
+      - EVALUATION_SERVICE_URL=http://evaluation:3006
+    depends_on:
+      - perception
+      - synthesis
+      - runtime
+      - evaluation
+    networks:
+      - imagine-network
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+
+  # Synthesis Service
+  synthesis:
+    build:
+      context: ./packages/synthesis
+      dockerfile: Dockerfile
+    ports:
+      - "3004:3004"
+    environment:
+      - NODE_ENV=production
+      - LOG_LEVEL=info
+      - ZAI_API_KEY=${ZAI_API_KEY}
+    networks:
+      - imagine-network
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+
+  # Runtime Service
+  runtime:
+    build:
+      context: ./packages/runtime
+      dockerfile: Dockerfile
+    ports:
+      - "3005:3005"
+    environment:
+      - NODE_ENV=production
+      - LOG_LEVEL=info
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - imagine-network
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    cap_add:
+      - CHOWN
+      - DAC_OVERRIDE
+      - FOWNER
+      - SETGID
+      - SETUID
+
+  # Evaluation Service
+  evaluation:
+    build:
+      context: ./packages/evaluation
+      dockerfile: Dockerfile
+    ports:
+      - "3006:3006"
+    environment:
+      - NODE_ENV=production
+      - LOG_LEVEL=info
+    networks:
+      - imagine-network
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+
+  # UI Dashboard
+  ui:
+    build:
+      context: ./packages/ui
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - NEXT_PUBLIC_API_URL=http://localhost:3001
+      - NEXT_PUBLIC_WS_URL=ws://localhost:3003
+    depends_on:
+      - planner
+    networks:
+      - imagine-network
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+
+  # API Gateway
+  gateway:
+    build:
+      context: ./packages/gateway
+      dockerfile: Dockerfile
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV=production
+      - LOG_LEVEL=info
+      - PERCEPTION_SERVICE_URL=http://perception:3002
+      - PLANNER_SERVICE_URL=http://planner:3003
+      - SYNTHESIS_SERVICE_URL=http://synthesis:3004
+      - RUNTIME_SERVICE_URL=http://runtime:3005
+      - EVALUATION_SERVICE_URL=http://evaluation:3006
+    depends_on:
+      - perception
+      - planner
+      - synthesis
+      - runtime
+      - evaluation
+    networks:
+      - imagine-network
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+
+networks:
+  imagine-network:
+    driver: bridge
+    internal: true
+
+volumes:
+  docker-socket:
+    driver: local

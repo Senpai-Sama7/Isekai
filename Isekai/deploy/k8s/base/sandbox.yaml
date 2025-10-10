@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sandbox
+  namespace: dream
+  labels: { app: sandbox }
+spec:
+  replicas: 2
+  selector: { matchLabels: { app: sandbox } }
+  template:
+    metadata: { labels: { app: sandbox } }
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile: { type: RuntimeDefault }
+      containers:
+        - name: sandbox
+          image: ghcr.io/your-org/sandbox:latest
+          ports: [ { containerPort: 8070 } ]
+          readinessProbe:
+            httpGet: { path: /health, port: 8070 }
+          livenessProbe:
+            httpGet: { path: /health, port: 8070 }
+          resources:
+            requests: { cpu: "100m", memory: "256Mi" }
+            limits:   { cpu: "500m", memory: "512Mi" }
+          securityContext:
+            readOnlyRootFilesystem: true
+            allowPrivilegeEscalation: false
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sandbox
+  namespace: dream
+spec:
+  selector: { app: sandbox }
+  ports:
+    - port: 8070
+      targetPort: 8070
+      protocol: TCP

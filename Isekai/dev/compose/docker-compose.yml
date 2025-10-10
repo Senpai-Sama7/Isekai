@@ -1,0 +1,35 @@
+version: "3.9"
+services:
+  backend:
+    build: ../../packages/backend
+    env_file: [ ../../.env.dev ]
+    ports: [ "8080:8080" ]
+    healthcheck:
+      test: ["CMD","wget","-qO-","http://localhost:8080/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  planner:
+    build: ../../packages/planner
+    env_file: [ ../../.env.dev ]
+    ports: [ "8090:8090" ]
+    healthcheck:
+      test: ["CMD","wget","-qO-","http://localhost:8090/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  sandbox:
+    build: ../../packages/sandbox
+    env_file: [ ../../.env.dev ]
+    ports: [ "8070:8070" ]
+    healthcheck:
+      test: ["CMD","wget","-qO-","http://localhost:8070/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  frontend:
+    build: ../../packages/frontend
+    env_file: [ ../../.env.dev ]
+    ports: [ "3000:3000" ]
+    depends_on: [ backend, planner, sandbox ]
+networks: { default: { name: dream-dev } }

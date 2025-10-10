@@ -1,0 +1,6 @@
+version: v1
+name: buf.build/dream/main
+deps: []
+build:
+  roots:
+    - proto

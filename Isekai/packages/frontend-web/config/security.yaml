@@ -1,0 +1,98 @@
+# Security Configuration
+
+## Network Allow-list
+allowed_network_hosts:
+  - "api.github.com"
+  - "cdn.jsdelivr.net"
+  - "fonts.googleapis.com"
+  - "fonts.gstatic.com"
+  - "registry.npmjs.org"
+
+## Package Allow-list
+allowed_packages:
+  # Core frameworks
+  - "react"
+  - "react-dom"
+  - "next"
+  - "typescript"
+  
+  # Styling
+  - "tailwindcss"
+  - "autoprefixer"
+  - "postcss"
+  - "class-variance-authority"
+  - "clsx"
+  - "tailwind-merge"
+  - "tailwindcss-animate"
+  
+  # UI Components
+  - "@radix-ui/react-slot"
+  - "@radix-ui/react-progress"
+  - "lucide-react"
+  
+  # Data handling
+  - "papaparse"
+  - "date-fns"
+  - "jspdf"
+  - "html2canvas"
+  
+  # Development
+  - "@types/node"
+  - "@types/react"
+  - "@types/react-dom"
+  - "@types/papaparse"
+  - "eslint"
+  - "prettier"
+  
+  # Testing
+  - "jest"
+  - "@types/jest"
+  - "testing-library"
+
+## Blocked Patterns
+blocked_code_patterns:
+  - "eval("
+  - "Function("
+  - "require('fs')"
+  - "require('child_process')"
+  - "require('os')"
+  - "require('path')"
+  - "import fs from"
+  - "import child_process from"
+  - "import os from"
+  - "import path from"
+  - "document.write"
+  - "innerHTML="
+  - "outerHTML="
+
+## Resource Limits
+resource_limits:
+  max_file_size: 1048576  # 1MB
+  max_total_size: 10485760  # 10MB
+  max_execution_time: 30000  # 30 seconds
+  max_memory: 536870912  # 512MB
+  max_cpu: 0.5  # 50% of one core
+
+## Sandbox Configuration
+sandbox:
+  network_mode: "none"
+  read_only_filesystem: true
+  no_new_privileges: true
+  drop_capabilities:
+    - "ALL"
+  add_capabilities:
+    - "CHOWN"
+    - "DAC_OVERRIDE"
+    - "FOWNER"
+    - "SETGID"
+    - "SETUID"
+  tmpfs:
+    "/tmp": "rw,noexec,nosuid,size=100m"
+
+## Security Headers
+security_headers:
+  helmet_enabled: true
+  cors_enabled: true
+  rate_limiting:
+    window_ms: 900000  # 15 minutes
+    max_requests: 100

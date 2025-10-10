@@ -1,0 +1,17 @@
+{
+  "name": "@dream/observability",
+  "private": true,
+  "version": "0.1.0",
+  "main": "dist/index.js",
+  "types": "src/index.ts",
+  "scripts": {
+    "build": "tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "@opentelemetry/api": "^1.8.0",
+    "@opentelemetry/sdk-node": "^0.52.1",
+    "@opentelemetry/instrumentation-http": "^0.52.1",
+    "@opentelemetry/instrumentation-express": "^0.52.1",
+    "prom-client": "^15.1.2"
+  }
+}
