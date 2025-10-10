@@ -13,8 +13,8 @@
 
 ```bash
 # Clone the repository
-git clone https://github.com/Senpai-Sama7/Dream.git
-cd Dream
+git clone https://github.com/Senpai-Sama7/Isekai.git
+cd Isekai
 
 # Install dependencies
 make install
@@ -51,7 +51,7 @@ make smoke-test
 PORT=8000
 PLANNER_URL=http://planner:8001
 SANDBOX_URL=http://sandbox:8002
-DB_PATH=/data/dream.db
+DB_PATH=/data/isekai.db
 NODE_ENV=production
 ```
 
@@ -69,7 +69,7 @@ NODE_ENV=production
 #### Sandbox (.env)
 ```
 PORT=8002
-WORKSPACE_DIR=/var/lib/dream/apps
+WORKSPACE_DIR=/var/lib/isekai/apps
 NODE_ENV=production
 ```
 

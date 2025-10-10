@@ -1,4 +1,4 @@
-# Dream - AI Agent System
+# Isekai - AI Agent System
 
 An AI agent that turns natural language into runnable apps via live iteration with real-time modification and creation based on user actions.
 
@@ -240,4 +240,4 @@ make -C packages/contracts gen
 ```
 
 ### Metrics
-Each service should expose `/metrics` on its HTTP port after importing `@dream/observability`.
+Each service should expose `/metrics` on its HTTP port after importing `@isekai/observability`.

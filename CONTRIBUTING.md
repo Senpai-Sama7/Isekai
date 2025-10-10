@@ -1,6 +1,6 @@
-# Contributing to Dream
+# Contributing to Isekai
 
-Thank you for your interest in contributing to Dream! This document provides guidelines and instructions for contributing.
+Thank you for your interest in contributing to Isekai! This document provides guidelines and instructions for contributing.
 
 ## Development Setup
 
@@ -14,8 +14,8 @@ Thank you for your interest in contributing to Dream! This document provides gui
 1. Fork the repository
 2. Clone your fork:
    ```bash
-   git clone https://github.com/YOUR_USERNAME/Dream.git
-   cd Dream
+   git clone https://github.com/YOUR_USERNAME/Isekai.git
+   cd Isekai
    ```
 3. Install dependencies:
    ```bash
@@ -29,7 +29,7 @@ Thank you for your interest in contributing to Dream! This document provides gui
 ## Project Structure
 
 ```
-dream/
+isekai/
 ├── packages/
 │   ├── backend/          # Express API server
 │   │   ├── src/
