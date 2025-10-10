@@ -62,7 +62,7 @@ app.post('/analyze', plannerRateLimit as any, validateAnalyze, async (req: Reque
   }
 });
 
-app.post('/infer', plannerRateLimit, validateInfer, async (req: Request, res: Response) => {
+app.post('/infer', plannerRateLimit as any, validateInfer, async (req: Request, res: Response) => {
   try {
     const { action, context, history } = req.body;
     
