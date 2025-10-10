@@ -14,8 +14,17 @@ export interface App {
   updatedAt: string;
 }
 
+export interface SuggestionRecord {
+  id: string;
+  appId: string;
+  title: string;
+  description: string;
+  changes: Record<string, string>;
+  createdAt: string;
+}
+
 export class Database {
-  private static instance: Database;
+  private static instance: Database | null = null;
   private db: BetterSqlite3.Database;
   private checkpointInterval?: NodeJS.Timeout;
 
@@ -46,6 +55,13 @@ export class Database {
     return Database.instance;
   }
 
+  static resetInstance(): void {
+    if (Database.instance) {
+      Database.instance.close();
+      Database.instance = null;
+    }
+  }
+
   private initTables() {
     this.db.exec(`
       CREATE TABLE IF NOT EXISTS apps (
@@ -62,6 +78,18 @@ export class Database {
 
       CREATE INDEX IF NOT EXISTS idx_apps_status ON apps(status);
       CREATE INDEX IF NOT EXISTS idx_apps_createdAt ON apps(createdAt DESC);
+
+      CREATE TABLE IF NOT EXISTS suggestions (
+        id TEXT PRIMARY KEY,
+        appId TEXT NOT NULL,
+        title TEXT NOT NULL,
+        description TEXT NOT NULL,
+        changes TEXT NOT NULL,
+        createdAt TEXT NOT NULL,
+        FOREIGN KEY(appId) REFERENCES apps(id) ON DELETE CASCADE
+      );
+
+      CREATE INDEX IF NOT EXISTS idx_suggestions_appId ON suggestions(appId);
     `);
   }
 
@@ -146,6 +174,60 @@ export class Database {
     const stmt = this.db.prepare('DELETE FROM apps WHERE id = ?');
     const result = stmt.run(id);
     return result.changes > 0;
+  }
+
+  saveSuggestions(appId: string, suggestions: SuggestionRecord[]): void {
+    if (suggestions.length === 0) {
+      this.clearSuggestions(appId);
+      return;
+    }
+
+    const insert = this.db.prepare(`
+      INSERT OR REPLACE INTO suggestions (id, appId, title, description, changes, createdAt)
+      VALUES (@id, @appId, @title, @description, @changes, @createdAt)
+    `);
+
+    const insertMany = this.db.transaction((records: SuggestionRecord[]) => {
+      for (const suggestion of records) {
+        insert.run({
+          id: suggestion.id,
+          appId,
+          title: suggestion.title,
+          description: suggestion.description,
+          changes: JSON.stringify(suggestion.changes),
+          createdAt: suggestion.createdAt
+        });
+      }
+    });
+
+    insertMany(suggestions);
+  }
+
+  getSuggestion(appId: string, suggestionId: string): SuggestionRecord | undefined {
+    const stmt = this.db.prepare(
+      'SELECT * FROM suggestions WHERE id = ? AND appId = ?'
+    );
+    const record = stmt.get(suggestionId, appId) as
+      | (Omit<SuggestionRecord, 'changes'> & { changes: string })
+      | undefined;
+
+    if (!record) {
+      return undefined;
+    }
+
+    return {
+      id: record.id,
+      appId: record.appId,
+      title: record.title,
+      description: record.description,
+      createdAt: record.createdAt,
+      changes: JSON.parse(record.changes)
+    };
+  }
+
+  clearSuggestions(appId: string): void {
+    const stmt = this.db.prepare('DELETE FROM suggestions WHERE appId = ?');
+    stmt.run(appId);
   }
 
   close(): void {
