@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { PromptRequest, PromptResponse } from '@imagine/types';
+import { PromptRequest, PromptResponse } from '@isekai/types';
 
 export function usePromptSubmission() {
   const [loading, setLoading] = useState(false);

@@ -1,5 +1,5 @@
 {
-  "name": "@imagine/planner",
+  "name": "@isekai/planner",
   "version": "1.0.0",
   "description": "Task planning and orchestration service",
   "main": "dist/index.js",
@@ -12,7 +12,7 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@imagine/types": "^1.0.0",
+    "@isekai/types": "^1.0.0",
     "express": "^4.18.0",
     "cors": "^2.8.5",
     "helmet": "^7.0.0",

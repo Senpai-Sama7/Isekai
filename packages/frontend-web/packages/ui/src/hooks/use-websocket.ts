@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { io, Socket } from 'socket.io-client';
-import { WebSocketMessage, Plan, PlanStep } from '@imagine/types';
+import { WebSocketMessage, Plan, PlanStep } from '@isekai/types';
 
 export function useWebSocket(url: string) {
   const [socket, setSocket] = useState<Socket | null>(null);

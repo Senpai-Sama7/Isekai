@@ -1,4 +1,4 @@
-import { PerceptionResult, UIComponent } from '@imagine/types';
+import { PerceptionResult, UIComponent } from '@isekai/types';
 
 export class PerceptionService {
   private componentPatterns = {

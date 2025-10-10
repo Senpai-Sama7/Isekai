@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
-import { Plan, PlanStep, PromptRequest, WebSocketMessage } from '@imagine/types';
+import { Plan, PlanStep, PromptRequest, WebSocketMessage } from '@isekai/types';
 import { winstonLogger } from '../utils/logger';
 import { PerceptionClient } from './perception-client';
 import { SynthesisClient } from './synthesis-client';

@@ -1,6 +1,6 @@
 # Example Usage
 
-This document provides examples of how to use the Dream AI Agent system.
+This document provides examples of how to use the Isekai AI Agent system.
 
 ## Starting the System
 

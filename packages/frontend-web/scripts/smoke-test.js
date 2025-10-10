@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * Smoke Test Script for Imagine Platform
+ * Smoke Test Script for Isekai Platform
  * 
  * This script performs basic smoke tests to ensure the platform
  * is functioning correctly.
@@ -33,7 +33,7 @@ class SmokeTest {
   }
 
   async run() {
-    console.log('💨 Starting Imagine Platform Smoke Tests');
+    console.log('💨 Starting Isekai Platform Smoke Tests');
     console.log('==========================================\n');
 
     try {

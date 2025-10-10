@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 import puppeteer from 'puppeteer';
-import { GeneratedApp, EvaluationResult, TestCase, TestResult } from '@imagine/types';
+import { GeneratedApp, EvaluationResult, TestCase, TestResult } from '@isekai/types';
 import { winstonLogger } from '../utils/logger';
 import { TestRunner } from './test-runner';
 import { CodeAnalyzer } from './code-analyzer';

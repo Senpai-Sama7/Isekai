@@ -1,7 +1,7 @@
 {
-  "name": "@dream/sandbox",
+  "name": "@isekai/sandbox",
   "version": "1.0.0",
-  "description": "Dream Sandbox Runtime - Secure isolated execution environment",
+  "description": "Isekai Sandbox Runtime - Secure isolated execution environment",
   "main": "dist/index.js",
   "scripts": {
     "dev": "ts-node-dev --respawn --transpile-only src/index.ts",

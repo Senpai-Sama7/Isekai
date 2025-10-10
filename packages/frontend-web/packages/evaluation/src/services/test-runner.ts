@@ -1,4 +1,4 @@
-import { GeneratedApp, TestCase, TestResult } from '@imagine/types';
+import { GeneratedApp, TestCase, TestResult } from '@isekai/types';
 import { winstonLogger } from '../utils/logger';
 
 export class TestRunner {

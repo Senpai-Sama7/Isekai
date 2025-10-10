@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { GeneratedApp, ExecutionResult } from '@imagine/types';
+import { GeneratedApp, ExecutionResult } from '@isekai/types';
 import { winstonLogger } from '../utils/logger';
 
 export class RuntimeClient {

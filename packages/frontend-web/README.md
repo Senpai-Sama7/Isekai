@@ -1,6 +1,6 @@
-# Imagine Platform
+# Isekai Platform
 
-An Imagine-class system that transforms natural language into runnable applications with live iteration capabilities.
+An Isekai-class system that transforms natural language into runnable applications with live iteration capabilities.
 
 ## 🚀 Quick Start
 
@@ -16,7 +16,7 @@ An Imagine-class system that transforms natural language into runnable applicati
 ```bash
 # Clone and setup
 git clone <repository-url>
-cd imagine-platform
+cd isekai-platform
 make bootstrap
 
 # Or manually:
@@ -42,7 +42,7 @@ make docker-up
 
 ### System Overview
 
-Imagine Platform is a microservices-based system with the following core components:
+Isekai Platform is a microservices-based system with the following core components:
 
 - **Perception Service** (Port 3002) - UI understanding and grounding
 - **Planner Service** (Port 3003) - Task planning and orchestration  
@@ -266,4 +266,4 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ---
 
-Built with ❤️ by the Imagine Platform team
+Built with ❤️ by the Isekai Platform team

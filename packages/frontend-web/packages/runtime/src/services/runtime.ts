@@ -4,7 +4,7 @@ import * as fs from 'fs-extra';
 import * as path from 'path';
 import * as tmp from 'tmp';
 import * as archiver from 'archiver';
-import { GeneratedApp, ExecutionResult, ExecutionContext } from '@imagine/types';
+import { GeneratedApp, ExecutionResult, ExecutionContext } from '@isekai/types';
 import { winstonLogger } from '../utils/logger';
 import { SecurityManager } from './security-manager';
 import { SandboxManager } from './sandbox-manager';

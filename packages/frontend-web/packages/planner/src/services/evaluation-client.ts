@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { GeneratedApp, EvaluationResult } from '@imagine/types';
+import { GeneratedApp, EvaluationResult } from '@isekai/types';
 import { winstonLogger } from '../utils/logger';
 
 export class EvaluationClient {

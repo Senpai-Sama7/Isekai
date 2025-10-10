@@ -2,7 +2,7 @@
 
 ## Overview
 
-This document summarizes the comprehensive test suite added to the Dream monorepo to achieve high test coverage for critical services.
+This document summarizes the comprehensive test suite added to the Isekai monorepo to achieve high test coverage for critical services.
 
 ## Test Statistics
 

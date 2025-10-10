@@ -1,4 +1,4 @@
-import { GeneratedApp } from '@imagine/types';
+import { GeneratedApp } from '@isekai/types';
 import { winstonLogger } from '../utils/logger';
 
 export class SecurityManager {
