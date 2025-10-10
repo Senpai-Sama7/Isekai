@@ -12,7 +12,7 @@ services:
       - NODE_ENV=production
       - LOG_LEVEL=info
     networks:
-      - imagine-network
+      - isekai-network
     restart: unless-stopped
     security_opt:
       - no-new-privileges:true
@@ -42,7 +42,7 @@ services:
       - runtime
       - evaluation
     networks:
-      - imagine-network
+      - isekai-network
     restart: unless-stopped
     security_opt:
       - no-new-privileges:true
@@ -61,7 +61,7 @@ services:
       - LOG_LEVEL=info
       - ZAI_API_KEY=${ZAI_API_KEY}
     networks:
-      - imagine-network
+      - isekai-network
     restart: unless-stopped
     security_opt:
       - no-new-privileges:true
@@ -81,7 +81,7 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     networks:
-      - imagine-network
+      - isekai-network
     restart: unless-stopped
     security_opt:
       - no-new-privileges:true
@@ -105,7 +105,7 @@ services:
       - NODE_ENV=production
       - LOG_LEVEL=info
     networks:
-      - imagine-network
+      - isekai-network
     restart: unless-stopped
     security_opt:
       - no-new-privileges:true
@@ -126,7 +126,7 @@ services:
     depends_on:
       - planner
     networks:
-      - imagine-network
+      - isekai-network
     restart: unless-stopped
     security_opt:
       - no-new-privileges:true
@@ -155,7 +155,7 @@ services:
       - runtime
       - evaluation
     networks:
-      - imagine-network
+      - isekai-network
     restart: unless-stopped
     security_opt:
       - no-new-privileges:true
@@ -163,7 +163,7 @@ services:
       - ALL
 
 networks:
-  imagine-network:
+  isekai-network:
     driver: bridge
     internal: true
 

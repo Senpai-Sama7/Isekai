@@ -1,5 +1,5 @@
 version: v1
-name: buf.build/dream/main
+name: buf.build/isekai/main
 deps: []
 build:
   roots:

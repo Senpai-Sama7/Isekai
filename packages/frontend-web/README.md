@@ -66,7 +66,7 @@ Isekai Platform is a microservices-based system with the following core componen
 ### Project Structure
 
 ```
-imagine-platform/
+isekai-platform/
 ├── packages/
 │   ├── types/          # Shared TypeScript types
 │   ├── perception/     # UI understanding service

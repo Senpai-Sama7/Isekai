@@ -32,4 +32,4 @@ services:
     env_file: [ ../../.env.dev ]
     ports: [ "3000:3000" ]
     depends_on: [ backend, planner, sandbox ]
-networks: { default: { name: dream-dev } }
+networks: { default: { name: isekai-dev } }
