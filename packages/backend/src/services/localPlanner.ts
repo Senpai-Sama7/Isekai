@@ -382,7 +382,7 @@ function render() {
 
 function addTodo(text) {
   const todo = {
-    id: crypto.randomUUID(),
+    id: randomUUID(),
     text,
     completed: false,
     createdAt: new Date().toISOString()
