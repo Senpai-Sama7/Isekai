@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Badge } from './ui/badge';
 import { Button } from './ui/button';
 import { ExternalLink, Code, Download } from 'lucide-react';
-import { GeneratedApp } from '@imagine/types';
+import { GeneratedApp } from '@isekai/types';
 
 interface AppViewerProps {
   app: GeneratedApp | null;

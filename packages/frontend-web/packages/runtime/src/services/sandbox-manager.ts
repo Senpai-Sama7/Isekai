@@ -2,7 +2,7 @@ import Docker from 'dockerode';
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import * as tmp from 'tmp';
-import { GeneratedApp } from '@imagine/types';
+import { GeneratedApp } from '@isekai/types';
 import { winstonLogger } from '../utils/logger';
 
 export class SandboxManager {

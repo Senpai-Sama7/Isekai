@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
-import { GeneratedApp, PerceptionResult } from '@imagine/types';
+import { GeneratedApp, PerceptionResult } from '@isekai/types';
 import { winstonLogger } from '../utils/logger';
 
 export class CodeTemplateManager {
