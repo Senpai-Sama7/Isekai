@@ -5,7 +5,7 @@ import { PromptInput } from '@/components/prompt-input';
 import { PlanViewer } from '@/components/plan-viewer';
 import { AppViewer } from '@/components/app-viewer';
 import { usePlanUpdates } from '@/hooks/use-websocket';
-import { PromptResponse, Plan, GeneratedApp } from '@imagine/types';
+import { PromptResponse, Plan, GeneratedApp } from '@isekai/types';
 
 export default function Home() {
   const [currentPrompt, setCurrentPrompt] = useState<PromptResponse | null>(null);
@@ -60,7 +60,7 @@ export default function Home() {
   return (
     <main className="container mx-auto p-6 space-y-6">
       <div className="text-center space-y-2">
-        <h1 className="text-4xl font-bold">Imagine Platform</h1>
+        <h1 className="text-4xl font-bold">Isekai Platform</h1>
         <p className="text-lg text-gray-600">
           Transform natural language into runnable applications
         </p>

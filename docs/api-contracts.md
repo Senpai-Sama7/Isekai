@@ -7,7 +7,7 @@
 ```yaml
 openapi: 3.0.0
 info:
-  title: Dream Backend API
+  title: Isekai Backend API
   version: 1.0.0
   description: API for managing AI-generated applications
 
@@ -273,7 +273,7 @@ components:
 ```yaml
 openapi: 3.0.0
 info:
-  title: Dream Planner Service
+  title: Isekai Planner Service
   version: 1.0.0
   description: NLP/AI service for intent analysis and code generation
 
@@ -346,7 +346,7 @@ paths:
 ```yaml
 openapi: 3.0.0
 info:
-  title: Dream Sandbox Runtime
+  title: Isekai Sandbox Runtime
   version: 1.0.0
   description: Secure isolated execution environment
 

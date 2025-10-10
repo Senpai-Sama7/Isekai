@@ -1,7 +1,7 @@
 {
-  "name": "@imagine/ui",
+  "name": "@isekai/ui",
   "version": "1.0.0",
-  "description": "React UI dashboard for Imagine platform",
+  "description": "React UI dashboard for Isekai platform",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -11,7 +11,7 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@imagine/types": "^1.0.0",
+    "@isekai/types": "^1.0.0",
     "next": "15.0.0",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",

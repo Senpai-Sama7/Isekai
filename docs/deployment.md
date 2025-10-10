@@ -13,8 +13,8 @@
 
 ```bash
 # Clone the repository
-git clone https://github.com/Senpai-Sama7/Dream.git
-cd Dream
+git clone https://github.com/Senpai-Sama7/Isekai.git
+cd Isekai
 
 # Install dependencies
 make install

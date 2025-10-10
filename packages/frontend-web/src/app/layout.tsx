@@ -7,7 +7,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Imagine Platform",
+  title: "Isekai Platform",
   description: "Transform natural language into runnable applications",
 };
 

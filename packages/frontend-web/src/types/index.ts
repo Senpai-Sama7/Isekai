@@ -1,4 +1,4 @@
-// Basic types for the Imagine Platform
+// Basic types for the Isekai Platform
 export interface PromptRequest {
   id: string;
   prompt: string;

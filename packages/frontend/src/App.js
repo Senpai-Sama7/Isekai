@@ -81,7 +81,7 @@ function App() {
   return (
     <div className="App">
       <header className="header">
-        <h1>🌟 Dream AI Agent</h1>
+        <h1>🌟 Isekai AI Agent</h1>
         <p>Turn natural language into runnable apps</p>
         {health && (
           <div className="health-status">
@@ -175,7 +175,7 @@ function App() {
             </div>
           ) : (
             <div className="empty-state">
-              <h2>Welcome to Dream!</h2>
+              <h2>Welcome to Isekai!</h2>
               <p>Generate an app by describing what you want in the prompt above.</p>
               <div className="examples">
                 <h3>Try these examples:</h3>
