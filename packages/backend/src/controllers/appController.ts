@@ -133,7 +133,8 @@ export class AppController {
     } catch (error) {
       logger.error('Error modifying app', {
         correlationId,
-        message: (error as Error).message,
+        errorMessage: (error as Error).message,
+        stack: (error as Error).stack,
       });
       throw error;
     }
