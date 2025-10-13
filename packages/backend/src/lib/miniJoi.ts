@@ -47,7 +47,7 @@ class StringSchema extends Schema<string | undefined> {
       if (this.isRequired) {
         errors.push({ message: 'Value is required', path });
       }
-      return { value: undefined, error: errors.length ? { details: errors } : undefined };
+      return { value, error: errors.length ? { details: errors } : undefined };
     }
 
     if (typeof value !== 'string') {
