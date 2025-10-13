@@ -26,7 +26,7 @@ export function errorHandler(err: Error, req: Request, res: Response, _next: Nex
 
   logger.error('Unhandled error', {
     correlationId,
-    message: err.message,
+    errorMessage: err.message,
     stack: err.stack,
   });
 
