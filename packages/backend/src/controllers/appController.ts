@@ -58,7 +58,8 @@ export class AppController {
       this.db.updateApp(appId, { status: 'error' });
       logger.error('Failed to generate app', {
         correlationId,
-        message: (error as Error).message,
+        errorMessage: (error as Error).message,
+        stack: (error as Error).stack,
       });
       throw error;
     }
