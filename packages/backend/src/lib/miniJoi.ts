@@ -86,7 +86,7 @@ class ObjectSchema extends Schema<Record<string, unknown>> {
     if (value === undefined || value === null) {
       if (this.isRequired) {
         errors.push({ message: 'Value is required', path });
-        return { value: {}, error: { details: errors } };
+        return { value: undefined, error: { details: errors } };
       }
 
       return { value: undefined as unknown as Record<string, unknown> };
@@ -94,7 +94,7 @@ class ObjectSchema extends Schema<Record<string, unknown>> {
 
     if (typeof value !== 'object' || Array.isArray(value)) {
       errors.push({ message: 'Value must be an object', path });
-      return { value: {}, error: { details: errors } };
+      return { value: undefined, error: { details: errors } };
     }
 
     const input = value as Record<string, unknown>;
