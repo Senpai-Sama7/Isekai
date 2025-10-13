@@ -47,7 +47,7 @@ export function createHttpClient({ baseURL, timeout, serviceName }: HttpClientOp
         if (attempt > retries) {
           break;
         }
-        await new Promise(resolve => setTimeout(resolve, Math.pow(2, attempt) * 100));
+        await new Promise(resolve => setTimeout(resolve, Math.min(Math.pow(2, attempt) * 100, 5000)));
       }
     }
 
