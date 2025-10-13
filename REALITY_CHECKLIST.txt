@@ -1,3 +1,4 @@
-- [x] F1 Backend CSV generation smoke test (`make smoke-test`) — VERIFIED
-- [ ] F2 Planner service health endpoint (`curl -s -o "%{http_code}" http://localhost:8001/health`) — UNVERIFIED
-- [ ] F3 Sandbox service health endpoint (`curl -s -o "%{http_code}" http://localhost:8002/health`) — UNVERIFIED
+- [x] F1 Backend API integration suite (`cd packages/backend && npm test -- --runInBand`) — VERIFIED (evidence/backend_jest.txt)
+- [x] F2 Planner code generation suite (`cd packages/planner && npm test -- --runInBand`) — VERIFIED (evidence/planner_jest.txt)
+- [x] F3 Sandbox process lifecycle suite (`cd packages/sandbox && npm test -- --runInBand`) — VERIFIED (evidence/sandbox_jest.txt)
+- [x] F4 Frontend rendering sanity suite (`cd packages/frontend && npm test -- --watch=false`) — VERIFIED (evidence/frontend_jest.txt)

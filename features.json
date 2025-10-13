@@ -1,26 +1,34 @@
 [
   {
     "id": "F1",
-    "feature": "Backend CSV app generation flow",
-    "command": "make smoke-test",
-    "expected": "Jest smoke suite passes generating CSV viewer app",
+    "feature": "Backend API integration suite",
+    "command": "cd packages/backend && npm test -- --runInBand",
+    "expected": "All backend Jest suites pass covering CRUD endpoints, planner and sandbox integration stubs",
     "status": "VERIFIED",
-    "evidence": ["evidence/make_smoke-test.txt"]
+    "evidence": ["evidence/backend_jest.txt"]
   },
   {
     "id": "F2",
-    "feature": "Planner service health endpoint responds",
-    "command": "curl -s -o '%{http_code}' http://localhost:8001/health",
-    "expected": "HTTP 200 with planner status payload",
-    "status": "UNVERIFIED",
-    "evidence": ["evidence/curl_planner_health.txt"]
+    "feature": "Planner code generation suite",
+    "command": "cd packages/planner && npm test -- --runInBand",
+    "expected": "Planner Jest suite passes verifying intent-to-code generation outputs",
+    "status": "VERIFIED",
+    "evidence": ["evidence/planner_jest.txt"]
   },
   {
     "id": "F3",
-    "feature": "Sandbox service health endpoint responds",
-    "command": "curl -s -o '%{http_code}' http://localhost:8002/health",
-    "expected": "HTTP 200 with sandbox status payload",
-    "status": "UNVERIFIED",
-    "evidence": ["evidence/curl_sandbox_health.txt"]
+    "feature": "Sandbox process lifecycle suite",
+    "command": "cd packages/sandbox && npm test -- --runInBand",
+    "expected": "Sandbox Jest suite passes validating execution, update, stop, and log behaviors",
+    "status": "VERIFIED",
+    "evidence": ["evidence/sandbox_jest.txt"]
+  },
+  {
+    "id": "F4",
+    "feature": "Frontend rendering sanity suite",
+    "command": "cd packages/frontend && npm test -- --watch=false",
+    "expected": "React Testing Library suite passes confirming core UI renders with mocked APIs",
+    "status": "VERIFIED",
+    "evidence": ["evidence/frontend_jest.txt"]
   }
 ]

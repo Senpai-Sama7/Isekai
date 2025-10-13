@@ -1,0 +1,42 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> @isekai/planner@1.0.0 test
+> jest --runInBand
+
+PASS tests/codeGenerator.test.ts
+  CodeGenerator
+    generate
+      ✓ should generate CSV viewer for csv_viewer intent (9 ms)
+      ✓ should generate todo app for todo_app intent (2 ms)
+      ✓ should generate markdown editor for markdown_editor intent (5 ms)
+      ✓ should generate generic app for unknown intent type (2 ms)
+      ✓ should use default case for unspecified intent type (1 ms)
+    CSV Viewer Generation
+      ✓ should include all required files for CSV viewer (2 ms)
+      ✓ should include search functionality in CSV viewer (1 ms)
+      ✓ should include file upload in CSV viewer (1 ms)
+    Todo App Generation
+      ✓ should include task management features (3 ms)
+      ✓ should include local storage persistence (1 ms)
+      ✓ should generate valid React hooks structure (1 ms)
+    Markdown Editor Generation
+      ✓ should include markdown parsing library (1 ms)
+      ✓ should include preview pane with dangerouslySetInnerHTML (1 ms)
+      ✓ should include textarea for editing (1 ms)
+      ✓ should have split-pane layout (2 ms)
+    Generic App Generation
+      ✓ should have basic React structure (1 ms)
+      ✓ should include minimal dependencies (1 ms)
+    Package.json Structure
+      ✓ should include standard scripts for all app types (2 ms)
+      ✓ should have valid semver versions (1 ms)
+    HTML Structure
+      ✓ should include proper DOCTYPE and meta tags (1 ms)
+    React Entry Point
+      ✓ should use React 18 createRoot API (1 ms)
+
+Test Suites: 1 passed, 1 total
+Tests:       21 passed, 21 total
+Snapshots:   0 total
+Time:        4.687 s, estimated 6 s
+Ran all test suites.

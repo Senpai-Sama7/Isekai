@@ -1,0 +1,64 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> @isekai/sandbox@1.0.0 test
+> jest --runInBand
+
+  console.error
+    Error killing process: Error: Kill failed
+        at /workspace/Isekai/packages/sandbox/tests/sandboxManager.test.ts:351:18
+        at /workspace/Isekai/node_modules/jest-mock/build/index.js:305:39
+        at /workspace/Isekai/node_modules/jest-mock/build/index.js:312:13
+        at mockConstructor (/workspace/Isekai/node_modules/jest-mock/build/index.js:102:19)
+        at /workspace/Isekai/packages/sandbox/src/services/sandboxManager.ts:235:15
+        at new Promise (<anonymous>)
+        at SandboxManager.stop (/workspace/Isekai/packages/sandbox/src/services/sandboxManager.ts:234:15)
+        at Object.<anonymous> (/workspace/Isekai/packages/sandbox/tests/sandboxManager.test.ts:354:35)
+
+      235 |           kill(app.process!.pid!, 'SIGTERM', (err) => {
+      236 |             if (err) {
+    > 237 |               console.error('Error killing process:', err);
+          |                       ^
+      238 |             }
+      239 |             resolve();
+      240 |           });
+
+      at src/services/sandboxManager.ts:237:23
+      at tests/sandboxManager.test.ts:351:9
+      at src/services/sandboxManager.ts:235:15
+      at SandboxManager.stop (src/services/sandboxManager.ts:234:15)
+      at Object.<anonymous> (tests/sandboxManager.test.ts:354:35)
+
+PASS tests/sandboxManager.test.ts
+  SandboxManager
+    constructor
+      ✓ should create workspace directory if it does not exist (9 ms)
+      ✓ should not create workspace directory if it already exists (2 ms)
+    execute
+      ✓ should create app directory and write files (29 ms)
+      ✓ should clean up existing app directory before creating new one (23 ms)
+      ✓ should handle npm install failure (39 ms)
+      ✓ should handle app start with timeout (7 ms)
+      ✓ should detect app ready from different success messages (65 ms)
+    getStatus
+      ✓ should return null for non-existent app (2 ms)
+      ✓ should return app status (25 ms)
+    update
+      ✓ should return null for non-existent app (1 ms)
+      ✓ should update files for existing app (23 ms)
+    stop
+      ✓ should handle stopping non-existent app gracefully (1 ms)
+      ✓ should kill process and clean up directory (24 ms)
+      ✓ should handle kill errors gracefully (90 ms)
+    getLogs
+      ✓ should return empty string for non-existent app (1 ms)
+      ✓ should return recent logs (22 ms)
+      ✓ should limit logs to tail parameter (23 ms)
+
+Test Suites: 1 passed, 1 total
+Tests:       17 passed, 17 total
+Snapshots:   0 total
+Time:        5.228 s, estimated 7 s
+Ran all test suites.
+Jest did not exit one second after the test run has completed.
+
+'This usually means that there are asynchronous operations that weren't stopped in your tests. Consider running Jest with `--detectOpenHandles` to troubleshoot this issue.
