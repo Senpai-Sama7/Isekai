@@ -6,6 +6,10 @@ import { appRouter } from './routes/apps';
 import { healthRouter } from './routes/health';
 import { Database } from './db/database';
 import dotenv from 'dotenv';
+import { correlationIdMiddleware } from './middleware/correlationId';
+import { requestLogger } from './middleware/requestLogger';
+import { errorHandler } from './middleware/errorHandler';
+import { logger } from './observability/logger';
 
 dotenv.config();
 
@@ -14,6 +18,12 @@ const PORT = process.env.PORT || 8000;
 
 // Initialize database
 Database.getInstance();
+
+// Correlation IDs
+app.use(correlationIdMiddleware);
+
+// Structured request logging
+app.use(requestLogger);
 
 // Security headers
 app.use(helmet({
@@ -56,14 +66,11 @@ app.use('/api/apps', writeRateLimit as any, appRouter);
 app.use('/api/health', healthRouter);
 
 // Error handler
-app.use((err: Error, req: express.Request, res: express.Response, next: express.NextFunction) => {
-  console.error(err.stack);
-  res.status(500).json({ error: 'Internal server error', message: err.message });
-});
+app.use(errorHandler);
 
 if (require.main === module) {
   app.listen(PORT, () => {
-    console.log(`Backend server running on http://localhost:${PORT}`);
+    logger.info(`Backend server running on http://localhost:${PORT}`);
   });
 }
 

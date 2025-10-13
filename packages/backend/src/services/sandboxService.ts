@@ -1,6 +1,7 @@
-import axios from 'axios';
 import { promises as fs } from 'fs';
 import { dirname, join, resolve } from 'path';
+import { createHttpClient } from './httpClient';
+import { logger } from '../observability/logger';
 
 const SANDBOX_URL = process.env.SANDBOX_URL || 'http://localhost:8002';
 const LOCAL_SANDBOX_ROOT = process.env.SANDBOX_ROOT || join(__dirname, '../../../data/sandbox-apps');
@@ -19,84 +20,125 @@ function shouldUseRemoteSandbox(): boolean {
 }
 
 export class SandboxService {
-  async execute(appId: string, files: any): Promise<any> {
+  private readonly remoteClient = createHttpClient({
+    baseURL: SANDBOX_URL,
+    timeout: 60_000,
+    serviceName: 'sandbox-service',
+  });
+
+  private buildHeaders(correlationId?: string) {
+    return correlationId
+      ? {
+          'x-correlation-id': correlationId,
+        }
+      : undefined;
+  }
+
+  async execute(appId: string, files: any, correlationId = 'unknown'): Promise<any> {
     if (!shouldUseRemoteSandbox()) {
       return this.executeLocally(appId, files);
     }
 
-    try {
-      const response = await axios.post(`${SANDBOX_URL}/execute`, {
-        appId,
-        files
-      }, { timeout: 60000 });
-
-      return response.data;
-    } catch (error) {
-      console.error('Sandbox service error:', error);
-      return this.executeLocally(appId, files);
-    }
+    return this.remoteClient.execute(
+      (client) =>
+        client
+          .post(
+            '/execute',
+            {
+              appId,
+              files,
+            },
+            { headers: this.buildHeaders(correlationId) }
+          )
+          .then((response) => response.data),
+      async () => {
+        logger.warn('Falling back to local sandbox for execute()', { correlationId });
+        return this.executeLocally(appId, files);
+      }
+    );
   }
 
-  async update(appId: string, files: any): Promise<any> {
+  async update(appId: string, files: any, correlationId = 'unknown'): Promise<any> {
     if (!shouldUseRemoteSandbox()) {
       return this.updateLocally(appId, files);
     }
 
-    try {
-      const response = await axios.patch(`${SANDBOX_URL}/apps/${appId}`, {
-        files
-      }, { timeout: 10000 });
-
-      return response.data;
-    } catch (error) {
-      console.error('Sandbox service error:', error);
-      return this.updateLocally(appId, files);
-    }
+    return this.remoteClient.execute(
+      (client) =>
+        client
+          .patch(
+            `/apps/${appId}`,
+            {
+              files,
+            },
+            { headers: this.buildHeaders(correlationId), timeout: 10_000 }
+          )
+          .then((response) => response.data),
+      async () => {
+        logger.warn('Falling back to local sandbox for update()', { correlationId });
+        return this.updateLocally(appId, files);
+      }
+    );
   }
 
-  async stop(appId: string): Promise<void> {
+  async stop(appId: string, correlationId = 'unknown'): Promise<void> {
     if (!shouldUseRemoteSandbox()) {
       await this.stopLocally(appId);
       return;
     }
 
-    try {
-      await axios.delete(`${SANDBOX_URL}/apps/${appId}`, { timeout: 10000 });
-    } catch (error) {
-      console.error('Sandbox service error:', error);
-      await this.stopLocally(appId);
-    }
+    await this.remoteClient.execute(
+      (client) =>
+        client.delete(`/apps/${appId}`, {
+          headers: this.buildHeaders(correlationId),
+          timeout: 10_000,
+        }),
+      async () => {
+        logger.warn('Falling back to local sandbox for stop()', { correlationId });
+        await this.stopLocally(appId);
+      }
+    );
   }
 
-  async getStatus(appId: string): Promise<any> {
+  async getStatus(appId: string, correlationId = 'unknown'): Promise<any> {
     if (!shouldUseRemoteSandbox()) {
       return this.getLocalStatus(appId);
     }
 
-    try {
-      const response = await axios.get(`${SANDBOX_URL}/apps/${appId}`, { timeout: 5000 });
-      return response.data;
-    } catch (error) {
-      console.error('Sandbox service error:', error);
-      return this.getLocalStatus(appId);
-    }
+    return this.remoteClient.execute(
+      (client) =>
+        client
+          .get(`/apps/${appId}`, {
+            headers: this.buildHeaders(correlationId),
+            timeout: 5_000,
+          })
+          .then((response) => response.data),
+      async () => {
+        logger.warn('Falling back to local sandbox for getStatus()', { correlationId });
+        return this.getLocalStatus(appId);
+      }
+    );
   }
 
-  async getLogs(appId: string, tail: number = 100): Promise<string> {
+  async getLogs(appId: string, tail: number = 100, correlationId?: string): Promise<string> {
     if (!shouldUseRemoteSandbox()) {
       return this.getLocalLogs(appId, tail);
     }
 
-    try {
-      const response = await axios.get(`${SANDBOX_URL}/apps/${appId}/logs`, {
-        params: { tail },
-        timeout: 5000
-      });
-      return response.data.logs;
-    } catch (error) {
-      console.error('Sandbox service error:', error);
-      return this.getLocalLogs(appId, tail);
-    }
+    return this.remoteClient.execute(
+      (client) =>
+        client
+          .get(`/apps/${appId}/logs`, {
+            params: { tail },
+            headers: this.buildHeaders(correlationId),
+            timeout: 5_000,
+          })
+          .then((response) => response.data.logs),
+      async () => {
+        logger.warn('Falling back to local sandbox for getLogs()', { correlationId });
+        return this.getLocalLogs(appId, tail);
+      }
+    );
   }
 
   private async ensureLocalRoot(): Promise<void> {

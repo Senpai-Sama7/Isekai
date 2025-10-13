@@ -107,10 +107,11 @@ describe('AppController', () => {
         })
       );
 
-      expect(mockPlannerService.analyze).toHaveBeenCalledWith(mockPrompt, mockContext);
+      expect(mockPlannerService.analyze).toHaveBeenCalledWith(mockPrompt, mockContext, 'unknown');
       expect(mockSandboxService.execute).toHaveBeenCalledWith(
         'mock-uuid-123',
-        mockPlannerResult.code.files
+        mockPlannerResult.code.files,
+        'unknown'
       );
 
       expect(mockDb.updateApp).toHaveBeenCalledWith('mock-uuid-123', {
@@ -150,7 +151,7 @@ describe('AppController', () => {
 
       await controller.generateApp(mockPrompt);
 
-      expect(mockPlannerService.analyze).toHaveBeenCalledWith(mockPrompt, undefined);
+      expect(mockPlannerService.analyze).toHaveBeenCalledWith(mockPrompt, undefined, 'unknown');
     });
 
     it('should update status to error on planner failure', async () => {
@@ -326,12 +327,14 @@ describe('AppController', () => {
       expect(mockPlannerService.analyzeModification).toHaveBeenCalledWith(
         'Add a search feature',
         { files: { 'package.json': '{}' } },
-        { context: {} }
+        { context: {} },
+        'unknown'
       );
 
       expect(mockSandboxService.update).toHaveBeenCalledWith(
         mockAppId,
-        mockModificationResult.code.files
+        mockModificationResult.code.files,
+        'unknown'
       );
 
       expect(mockDb.updateApp).toHaveBeenCalledWith(mockAppId, {
@@ -349,7 +352,7 @@ describe('AppController', () => {
       await controller.modifyApp(mockAppId, undefined, changes);
 
       expect(mockPlannerService.analyzeModification).not.toHaveBeenCalled();
-      expect(mockSandboxService.update).toHaveBeenCalledWith(mockAppId, changes);
+      expect(mockSandboxService.update).toHaveBeenCalledWith(mockAppId, changes, 'unknown');
       expect(mockDb.updateApp).toHaveBeenCalledWith(mockAppId, {
         code: JSON.stringify({ files: changes })
       });
@@ -392,7 +395,7 @@ describe('AppController', () => {
 
       const result = await controller.deleteApp('app-123');
 
-      expect(mockSandboxService.stop).toHaveBeenCalledWith('app-123');
+      expect(mockSandboxService.stop).toHaveBeenCalledWith('app-123', 'unknown');
       expect(mockDb.deleteApp).toHaveBeenCalledWith('app-123');
       expect(result).toBe(true);
     });
@@ -462,7 +465,7 @@ describe('AppController', () => {
         data: { column: 'name' },
         context: { context: {} },
         currentCode: { files: {} }
-      });
+      }, 'unknown');
 
       expect(mockDb.saveSuggestions).toHaveBeenCalledWith(
         'app-123',
@@ -554,7 +557,7 @@ describe('AppController', () => {
       const result = await controller.applySuggestion('app-123', 'sug-1');
 
       expect(result).toEqual(expect.objectContaining({ id: 'app-123' }));
-      expect(mockSandboxService.update).toHaveBeenCalledWith('app-123', { 'app.js': 'updated' });
+      expect(mockSandboxService.update).toHaveBeenCalledWith('app-123', { 'app.js': 'updated' }, 'unknown');
       expect(mockDb.clearSuggestions).toHaveBeenCalledWith('app-123');
     });
   });

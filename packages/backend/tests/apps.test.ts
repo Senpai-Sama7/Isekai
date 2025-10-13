@@ -26,16 +26,20 @@ jest.mock('../src/controllers/appController', () => {
 
 // Now import the router after the mock is set up
 import { appRouter } from '../src/routes/apps';
+import { correlationIdMiddleware } from '../src/middleware/correlationId';
+import { errorHandler } from '../src/middleware/errorHandler';
 
 describe('App Routes', () => {
   let app: Application;
 
   beforeEach(() => {
     jest.clearAllMocks();
-    
+
     app = express();
     app.use(express.json());
+    app.use(correlationIdMiddleware);
     app.use('/api/apps', appRouter);
+    app.use(errorHandler);
   });
 
   describe('POST /api/apps/generate', () => {
@@ -57,7 +61,11 @@ describe('App Routes', () => {
         .expect(201);
 
       expect(response.body).toEqual(mockApp);
-      expect(mockGenerateApp).toHaveBeenCalledWith('Create a CSV viewer', undefined);
+      expect(mockGenerateApp).toHaveBeenCalledWith(
+        'Create a CSV viewer',
+        undefined,
+        expect.any(String)
+      );
     });
 
     it('should generate app with context', async () => {
@@ -75,7 +83,7 @@ describe('App Routes', () => {
         .send({ prompt: 'Create a todo app', context })
         .expect(201);
 
-      expect(mockGenerateApp).toHaveBeenCalledWith('Create a todo app', context);
+      expect(mockGenerateApp).toHaveBeenCalledWith('Create a todo app', context, expect.any(String));
     });
 
     it('should return 400 if prompt is missing', async () => {
@@ -84,10 +92,11 @@ describe('App Routes', () => {
         .send({})
         .expect(400);
 
-      expect(response.body).toHaveProperty('error');
-      // Validation middleware returns 'Validation failed' as error
-      expect(response.body.error).toBe('Validation failed');
-      expect(response.body).toHaveProperty('details');
+      expect(response.body.error).toEqual(
+        expect.objectContaining({ code: 'BadRequest', message: 'Request body validation failed.' })
+      );
+      expect(response.body).toHaveProperty('correlationId');
+      expect(response.body.error).toHaveProperty('details');
     });
 
     it('should return 500 on controller error', async () => {
@@ -98,8 +107,9 @@ describe('App Routes', () => {
         .send({ prompt: 'Create an app' })
         .expect(500);
 
-      expect(response.body).toHaveProperty('error');
-      expect(response.body.error).toBe('Failed to generate app');
+      expect(response.body.error).toEqual(
+        expect.objectContaining({ code: 'InternalServerError', message: 'An unexpected error occurred.' })
+      );
     });
   });
 
@@ -144,8 +154,9 @@ describe('App Routes', () => {
         .get('/api/apps?limit=invalid&offset=also-invalid')
         .expect(400);
 
-      expect(response.body).toHaveProperty('error');
-      expect(response.body.error).toBe('Validation failed');
+      expect(response.body.error).toEqual(
+        expect.objectContaining({ code: 'BadRequest' })
+      );
     });
 
     it('should return 500 on controller error', async () => {
@@ -157,7 +168,9 @@ describe('App Routes', () => {
         .get('/api/apps')
         .expect(500);
 
-      expect(response.body.error).toBe('Failed to list apps');
+      expect(response.body.error).toEqual(
+        expect.objectContaining({ code: 'InternalServerError', message: 'An unexpected error occurred.' })
+      );
     });
   });
 
@@ -186,7 +199,9 @@ describe('App Routes', () => {
         .get('/api/apps/non-existent')
         .expect(404);
 
-      expect(response.body.error).toBe('App not found');
+      expect(response.body.error).toEqual(
+        expect.objectContaining({ code: 'NotFound', message: 'App not found.' })
+      );
     });
 
     it('should return 500 on controller error', async () => {
@@ -198,7 +213,9 @@ describe('App Routes', () => {
         .get('/api/apps/app-123')
         .expect(500);
 
-      expect(response.body.error).toBe('Failed to get app');
+      expect(response.body.error).toEqual(
+        expect.objectContaining({ code: 'InternalServerError', message: 'An unexpected error occurred.' })
+      );
     });
   });
 
@@ -218,7 +235,12 @@ describe('App Routes', () => {
         .expect(200);
 
       expect(response.body).toEqual(mockApp);
-      expect(mockModifyApp).toHaveBeenCalledWith('app-123', 'Add a search feature', undefined);
+      expect(mockModifyApp).toHaveBeenCalledWith(
+        'app-123',
+        'Add a search feature',
+        undefined,
+        expect.any(String)
+      );
     });
 
     it('should update app with changes', async () => {
@@ -232,7 +254,12 @@ describe('App Routes', () => {
         .send({ changes })
         .expect(200);
 
-      expect(mockModifyApp).toHaveBeenCalledWith('app-123', undefined, changes);
+      expect(mockModifyApp).toHaveBeenCalledWith(
+        'app-123',
+        undefined,
+        changes,
+        expect.any(String)
+      );
     });
 
     it('should update app with both prompt and changes', async () => {
@@ -246,7 +273,12 @@ describe('App Routes', () => {
         .send({ prompt: 'Make it dark', changes })
         .expect(200);
 
-      expect(mockModifyApp).toHaveBeenCalledWith('app-123', 'Make it dark', changes);
+      expect(mockModifyApp).toHaveBeenCalledWith(
+        'app-123',
+        'Make it dark',
+        changes,
+        expect.any(String)
+      );
     });
 
     it('should return 404 if app not found', async () => {
@@ -257,7 +289,9 @@ describe('App Routes', () => {
         .send({ prompt: 'Update' })
         .expect(404);
 
-      expect(response.body.error).toBe('App not found');
+      expect(response.body.error).toEqual(
+        expect.objectContaining({ code: 'NotFound', message: 'App not found.' })
+      );
     });
 
     it('should return 500 on controller error', async () => {
@@ -268,7 +302,9 @@ describe('App Routes', () => {
         .send({ prompt: 'Update' })
         .expect(500);
 
-      expect(response.body.error).toBe('Failed to update app');
+      expect(response.body.error).toEqual(
+        expect.objectContaining({ code: 'InternalServerError', message: 'An unexpected error occurred.' })
+      );
     });
   });
 
@@ -280,7 +316,7 @@ describe('App Routes', () => {
         .delete('/api/apps/app-123')
         .expect(204);
 
-      expect(mockDeleteApp).toHaveBeenCalledWith('app-123');
+      expect(mockDeleteApp).toHaveBeenCalledWith('app-123', expect.any(String));
     });
 
     it('should return 404 if app not found', async () => {
@@ -290,7 +326,9 @@ describe('App Routes', () => {
         .delete('/api/apps/non-existent')
         .expect(404);
 
-      expect(response.body.error).toBe('App not found');
+      expect(response.body.error).toEqual(
+        expect.objectContaining({ code: 'NotFound', message: 'App not found.' })
+      );
     });
 
     it('should return 500 on controller error', async () => {
@@ -300,7 +338,9 @@ describe('App Routes', () => {
         .delete('/api/apps/app-123')
         .expect(500);
 
-      expect(response.body.error).toBe('Failed to delete app');
+      expect(response.body.error).toEqual(
+        expect.objectContaining({ code: 'InternalServerError', message: 'An unexpected error occurred.' })
+      );
     });
   });
 
@@ -327,7 +367,8 @@ describe('App Routes', () => {
         'app-123',
         'click',
         'header',
-        { column: 'name' }
+        { column: 'name' },
+        expect.any(String)
       );
     });
 
@@ -350,7 +391,9 @@ describe('App Routes', () => {
         .send({ action: 'click', target: 'button', data: {} })
         .expect(500);
 
-      expect(response.body.error).toBe('Failed to track action');
+      expect(response.body.error).toEqual(
+        expect.objectContaining({ code: 'InternalServerError', message: 'An unexpected error occurred.' })
+      );
     });
   });
 
@@ -370,7 +413,7 @@ describe('App Routes', () => {
         .expect(200);
 
       expect(response.body).toEqual(mockApp);
-      expect(mockApplySuggestion).toHaveBeenCalledWith('app-123', 'sug-1');
+      expect(mockApplySuggestion).toHaveBeenCalledWith('app-123', 'sug-1', expect.any(String));
     });
 
     it('should return 404 if app or suggestion not found', async () => {
@@ -381,7 +424,9 @@ describe('App Routes', () => {
         .send({ suggestionId: 'non-existent' })
         .expect(404);
 
-      expect(response.body.error).toBe('App or suggestion not found');
+      expect(response.body.error).toEqual(
+        expect.objectContaining({ code: 'NotFound', message: 'App or suggestion not found.' })
+      );
     });
 
     it('should return 500 on controller error', async () => {
@@ -392,7 +437,9 @@ describe('App Routes', () => {
         .send({ suggestionId: 'sug-1' })
         .expect(500);
 
-      expect(response.body.error).toBe('Failed to apply suggestion');
+      expect(response.body.error).toEqual(
+        expect.objectContaining({ code: 'InternalServerError', message: 'An unexpected error occurred.' })
+      );
     });
   });
 });
