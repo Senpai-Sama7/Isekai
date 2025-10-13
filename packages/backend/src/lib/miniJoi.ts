@@ -102,8 +102,9 @@ class ObjectSchema extends Schema<Record<string, unknown>> {
     const shapeEntries = Object.entries(this.shape);
 
     if (shapeEntries.length === 0) {
-      const clone = { ...input };
-      return { value: clone, error: errors.length ? { details: errors } : undefined };
+      const value = options.stripUnknown ? {} : { ...input };
+      return { value, error: errors.length ? { details: errors } : undefined };
+    }
     }
 
     for (const [key, schema] of shapeEntries) {
