@@ -33,7 +33,7 @@ export class PlannerService {
       : undefined;
   }
 
-  async analyze(prompt: string, context: any, correlationId = 'unknown'): Promise<any> {
+  async analyze(prompt: string, context?: any, correlationId = 'unknown'): Promise<any> {
     if (!shouldUseRemotePlanner()) {
       return this.localPlanner.generateApp(prompt, context);
     }
