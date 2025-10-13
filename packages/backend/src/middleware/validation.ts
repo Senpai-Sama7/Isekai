@@ -1,14 +1,12 @@
 import { body, param, query, validationResult } from 'express-validator';
 import { Request, Response, NextFunction } from 'express';
+import { badRequest } from '../errors/appError';
 
 // Validation error handler
 export const handleValidationErrors = (req: Request, res: Response, next: NextFunction) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(400).json({ 
-      error: 'Validation failed', 
-      details: errors.array() 
-    });
+    return next(badRequest('Validation failed', errors.array()));
   }
   next();
 };

@@ -3,6 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { Database, App, SuggestionRecord } from '../db/database';
 import { PlannerService } from '../services/plannerService';
 import { SandboxService } from '../services/sandboxService';
+import { logger } from '../observability/logger';
 
 export class AppController {
   private db: Database;
@@ -15,7 +16,7 @@ export class AppController {
     this.sandboxService = new SandboxService();
   }
 
-  async generateApp(prompt: string, context?: any): Promise<any> {
+  async generateApp(prompt: string, context?: any, correlationId = 'unknown'): Promise<any> {
     const appId = uuidv4();
     const now = new Date().toISOString();
 
@@ -35,10 +36,10 @@ export class AppController {
 
     // Generate code via planner service
     try {
-      const result = await this.plannerService.analyze(prompt, context);
-      
+      const result = await this.plannerService.analyze(prompt, context, correlationId);
+
       // Execute in sandbox
-      const sandboxResult = await this.sandboxService.execute(appId, result.code.files);
+      const sandboxResult = await this.sandboxService.execute(appId, result.code.files, correlationId);
       
       // Update app with results
       this.db.updateApp(appId, {
@@ -55,6 +56,11 @@ export class AppController {
       return this.getApp(appId);
     } catch (error) {
       this.db.updateApp(appId, { status: 'error' });
+      logger.error('Failed to generate app', {
+        correlationId,
+        errorMessage: (error as Error).message,
+        stack: (error as Error).stack,
+      });
       throw error;
     }
   }
@@ -95,7 +101,7 @@ export class AppController {
     };
   }
 
-  async modifyApp(appId: string, prompt?: string, changes?: any): Promise<any | null> {
+  async modifyApp(appId: string, prompt?: string, changes?: any, correlationId = 'unknown'): Promise<any | null> {
     const app = this.db.getApp(appId);
     if (!app) return null;
 
@@ -106,7 +112,8 @@ export class AppController {
         const result = await this.plannerService.analyzeModification(
           prompt,
           JSON.parse(app.code),
-          JSON.parse(app.metadata)
+          JSON.parse(app.metadata),
+          correlationId
         );
         newCode = result.code.files;
       } else if (changes) {
@@ -116,7 +123,7 @@ export class AppController {
       }
 
       // Update in sandbox
-      await this.sandboxService.update(appId, newCode);
+      await this.sandboxService.update(appId, newCode, correlationId);
       
       // Update database
       this.db.updateApp(appId, {
@@ -125,19 +132,26 @@ export class AppController {
 
       return this.getApp(appId);
     } catch (error) {
-      console.error('Error modifying app:', error);
+      logger.error('Error modifying app', {
+        correlationId,
+        errorMessage: (error as Error).message,
+        stack: (error as Error).stack,
+      });
       throw error;
     }
   }
 
-  async deleteApp(appId: string): Promise<boolean> {
+  async deleteApp(appId: string, correlationId = 'unknown'): Promise<boolean> {
     const app = this.db.getApp(appId);
     if (!app) return false;
 
     try {
-      await this.sandboxService.stop(appId);
+      await this.sandboxService.stop(appId, correlationId);
     } catch (error) {
-      console.error('Error stopping app in sandbox:', error);
+      logger.warn('Error stopping app in sandbox', {
+        correlationId,
+        errorMessage: (error as Error).message,
+      });
     }
 
     return this.db.deleteApp(appId);
@@ -147,7 +161,8 @@ export class AppController {
     appId: string,
     action: string,
     target: string,
-    data: any
+    data: any,
+    correlationId = 'unknown'
   ): Promise<SuggestionRecord[]> {
     const app = this.db.getApp(appId);
     if (!app) return [];
@@ -159,7 +174,7 @@ export class AppController {
         data,
         context: JSON.parse(app.metadata),
         currentCode: JSON.parse(app.code)
-      });
+      }, correlationId);
 
       const suggestions = (result.suggestions || []).map((suggestion: any) => {
         const id = suggestion.id || randomUUID();
@@ -183,12 +198,15 @@ export class AppController {
 
       return suggestions;
     } catch (error) {
-      console.error('Error inferring from action:', error);
+      logger.warn('Error inferring from action', {
+        correlationId,
+        errorMessage: (error as Error).message,
+      });
       return [];
     }
   }
 
-  async applySuggestion(appId: string, suggestionId: string): Promise<any | null> {
+  async applySuggestion(appId: string, suggestionId: string, correlationId = 'unknown'): Promise<any | null> {
     const suggestion = this.db.getSuggestion(appId, suggestionId);
     const app = this.db.getApp(appId);
 
@@ -199,7 +217,7 @@ export class AppController {
     const currentCode = JSON.parse(app.code).files || {};
     const updatedFiles = { ...currentCode, ...suggestion.changes };
 
-    await this.sandboxService.update(appId, updatedFiles);
+    await this.sandboxService.update(appId, updatedFiles, correlationId);
 
     this.db.updateApp(appId, {
       code: JSON.stringify({ files: updatedFiles })
