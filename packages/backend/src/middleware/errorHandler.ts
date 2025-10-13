@@ -9,7 +9,7 @@ export function errorHandler(err: Error, req: Request, res: Response, _next: Nex
     logger.warn('Handled application error', {
       correlationId,
       code: err.code,
-      message: err.message,
+      errorMessage: err.message,
       details: err.details,
     });
 
