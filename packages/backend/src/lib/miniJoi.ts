@@ -47,7 +47,7 @@ class StringSchema extends Schema<string | undefined> {
       if (this.isRequired) {
         errors.push({ message: 'Value is required', path });
       }
-      return { value, error: errors.length ? { details: errors } : undefined };
+      return { value: undefined, error: errors.length ? { details: errors } : undefined };
     }
 
     if (typeof value !== 'string') {
@@ -86,15 +86,15 @@ class ObjectSchema extends Schema<Record<string, unknown>> {
     if (value === undefined || value === null) {
       if (this.isRequired) {
         errors.push({ message: 'Value is required', path });
-        return { value: undefined, error: { details: errors } };
+        return { value: {} as Record<string, unknown>, error: { details: errors } };
       }
 
-      return { value: undefined as unknown as Record<string, unknown> };
+      return { value: {} as Record<string, unknown> };
     }
 
     if (typeof value !== 'object' || Array.isArray(value)) {
       errors.push({ message: 'Value must be an object', path });
-      return { value: undefined, error: { details: errors } };
+      return { value: {} as Record<string, unknown>, error: { details: errors } };
     }
 
     const input = value as Record<string, unknown>;
@@ -104,7 +104,6 @@ class ObjectSchema extends Schema<Record<string, unknown>> {
     if (shapeEntries.length === 0) {
       const value = options.stripUnknown ? {} : { ...input };
       return { value, error: errors.length ? { details: errors } : undefined };
-    }
     }
 
     for (const [key, schema] of shapeEntries) {

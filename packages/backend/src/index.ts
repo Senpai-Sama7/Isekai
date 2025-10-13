@@ -10,6 +10,7 @@ import { correlationIdMiddleware } from './middleware/correlationId';
 import { requestLogger } from './middleware/requestLogger';
 import { errorHandler } from './middleware/errorHandler';
 import { logger } from './observability/logger';
+import { validateOrigins } from './utils/security';
 
 dotenv.config();
 
@@ -33,17 +34,19 @@ app.use(helmet({
       styleSrc: ["'self'", "'unsafe-inline'"],
       scriptSrc: ["'self'"],
       imgSrc: ["'self'", "data:", "https:"],
-      connectSrc: ["'self'", process.env.FRONTEND_URL || "http://localhost:3000"],
+      connectSrc: ["'self'", process.env.FRONTEND_URL || "http://localhost:3001", "http://localhost:3000"],
     }
   },
   crossOriginEmbedderPolicy: false,
 }));
 
 // CORS configuration based on environment
+const allowedOrigins = process.env.NODE_ENV === 'production'
+  ? validateOrigins(process.env.ALLOWED_ORIGINS || '')
+  : ['http://localhost:3000', 'http://localhost:3001'];
+
 const corsOptions = {
-  origin: process.env.NODE_ENV === 'production' 
-    ? (process.env.ALLOWED_ORIGINS || '').split(',').filter(Boolean)
-    : ['http://localhost:3000', 'http://localhost:3001'],
+  origin: allowedOrigins.length > 0 ? allowedOrigins : false,
   credentials: true,
   optionsSuccessStatus: 200
 };
@@ -68,9 +71,51 @@ app.use('/api/health', healthRouter);
 // Error handler
 app.use(errorHandler);
 
+// Graceful shutdown handler
+let server: ReturnType<typeof app.listen> | null = null;
+
+function gracefulShutdown(signal: string) {
+  logger.info(`Received ${signal}, starting graceful shutdown`);
+
+  if (server) {
+    server.close(() => {
+      logger.info('HTTP server closed');
+
+      try {
+        Database.getInstance().close();
+        logger.info('Database closed');
+      } catch (error) {
+        logger.error('Error closing database', { error });
+      }
+
+      process.exit(0);
+    });
+
+    // Force shutdown after 10 seconds
+    setTimeout(() => {
+      logger.error('Forced shutdown after timeout');
+      process.exit(1);
+    }, 10000);
+  } else {
+    process.exit(0);
+  }
+}
+
 if (require.main === module) {
-  app.listen(PORT, () => {
+  server = app.listen(PORT, () => {
     logger.info(`Backend server running on http://localhost:${PORT}`);
+  });
+
+  // Register shutdown handlers
+  process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
+  process.on('SIGINT', () => gracefulShutdown('SIGINT'));
+  process.on('uncaughtException', (error) => {
+    logger.error('Uncaught exception', { error: error.message, stack: error.stack });
+    gracefulShutdown('uncaughtException');
+  });
+  process.on('unhandledRejection', (reason) => {
+    logger.error('Unhandled rejection', { reason });
+    gracefulShutdown('unhandledRejection');
   });
 }
 

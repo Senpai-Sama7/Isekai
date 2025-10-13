@@ -131,3 +131,52 @@ appRouter.post(
     res.json(app);
   })
 );
+
+// Track interactions (batch)
+appRouter.post(
+  '/interactions',
+  asyncHandler(async (req: Request, res: Response) => {
+    const { interactions } = req.body;
+    const correlationId = req.correlationId || 'unknown';
+
+    if (!Array.isArray(interactions)) {
+      throw badRequest('Interactions must be an array.');
+    }
+
+    const suggestions = await controller.analyzeInteractions(interactions, correlationId);
+    res.json({ suggestions });
+  })
+);
+
+// Get AI suggestions for app based on interactions
+appRouter.post(
+  '/:appId/suggest',
+  asyncHandler(async (req: Request, res: Response) => {
+    const { interactions } = req.body;
+    const correlationId = req.correlationId || 'unknown';
+
+    if (!Array.isArray(interactions)) {
+      throw badRequest('Interactions must be an array.');
+    }
+
+    const suggestions = await controller.getSuggestions(req.params.appId, interactions, correlationId);
+    res.json({ suggestions });
+  })
+);
+
+// Modify app with prompt or changes
+appRouter.post(
+  '/:appId/modify',
+  asyncHandler(async (req: Request, res: Response) => {
+    const { prompt, changes } = req.body;
+    const correlationId = req.correlationId || 'unknown';
+
+    const app = await controller.modifyApp(req.params.appId, prompt, changes, correlationId);
+
+    if (!app) {
+      throw notFound('App not found.');
+    }
+
+    res.json(app);
+  })
+);

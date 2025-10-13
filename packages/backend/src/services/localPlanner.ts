@@ -1,4 +1,5 @@
 import { randomUUID } from 'crypto';
+import { escapeHtml, escapeJs } from '../utils/security';
 
 export interface LocalPlanResult {
   intent: string;
@@ -382,7 +383,7 @@ function render() {
 
 function addTodo(text) {
   const todo = {
-    id: randomUUID(),
+    id: crypto.randomUUID(),
     text,
     completed: false,
     createdAt: new Date().toISOString()
@@ -585,18 +586,22 @@ setInterval(() => {
 
   private buildStaticApp(prompt: string, context?: any): LocalPlanResult {
     const title = context?.title || this.extractTitle(prompt) || this.defaultTitle;
+    const safeTitle = escapeHtml(title);
+    const safePrompt = escapeHtml(prompt);
+    const safePromptJs = escapeJs(prompt);
+
     const files = this.composeStaticBundle({
-      title,
-      description: `Generated interface for: ${prompt}`,
+      title: safeTitle,
+      description: `Generated interface for: ${safePrompt}`,
       styles: this.baseStyles(),
       script: this.wrapWithDomReady(`
 const info = document.querySelector('#prompt-info');
-info.textContent = ${JSON.stringify(prompt)};
+info.textContent = ${JSON.stringify(safePromptJs)};
 `),
       body: `
 <div class="panel">
   <header class="panel__header">
-    <h1>${title}</h1>
+    <h1>${safeTitle}</h1>
     <p>Project scaffold generated locally without external services.</p>
   </header>
   <section>

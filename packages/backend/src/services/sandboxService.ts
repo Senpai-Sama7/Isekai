@@ -2,6 +2,11 @@ import { promises as fs } from 'fs';
 import { dirname, join, resolve } from 'path';
 import { createHttpClient } from './httpClient';
 import { logger } from '../observability/logger';
+import {
+  validatePathWithinBaseSync,
+  validateFileCount,
+  validateTotalFilesSize
+} from '../utils/security';
 
 const SANDBOX_URL = process.env.SANDBOX_URL || 'http://localhost:8002';
 const LOCAL_SANDBOX_ROOT = process.env.SANDBOX_ROOT || join(__dirname, '../../../data/sandbox-apps');
@@ -208,17 +213,30 @@ export class SandboxService {
   }
 
   private async writeFiles(appDir: string, files: Record<string, string>): Promise<void> {
+    // Validate file count and total size limits
+    const MAX_FILES = 100;
+    const MAX_TOTAL_SIZE = 10 * 1024 * 1024; // 10MB
+
+    validateFileCount(files, MAX_FILES);
+    validateTotalFilesSize(files, MAX_TOTAL_SIZE);
+
     const entries = Object.entries(files || {});
 
     await Promise.all(
       entries.map(async ([relativePath, contents]) => {
-        const absolutePath = resolve(appDir, relativePath);
-        if (!absolutePath.startsWith(appDir)) {
-          throw new Error(`Invalid file path: ${relativePath}`);
-        }
+        // Security: Validate path to prevent traversal attacks
+        try {
+          const absolutePath = validatePathWithinBaseSync(appDir, relativePath);
 
-        await fs.mkdir(dirname(absolutePath), { recursive: true });
-        await fs.writeFile(absolutePath, contents ?? '', 'utf8');
+          await fs.mkdir(dirname(absolutePath), { recursive: true });
+          await fs.writeFile(absolutePath, contents ?? '', 'utf8');
+        } catch (error) {
+          logger.error('Path validation failed', {
+            relativePath,
+            error: (error as Error).message
+          });
+          throw new Error(`Invalid or unsafe file path: ${relativePath}`);
+        }
       })
     );
   }

@@ -40,9 +40,12 @@ export class Database {
     this.db.pragma('journal_mode = WAL');
     this.db.pragma('busy_timeout = 5000');
     this.db.pragma('synchronous = NORMAL');
-    this.db.pragma('cache_size = 1000000000');
+    // cache_size is in pages (negative = KB). -2000 = 2MB cache
+    this.db.pragma('cache_size = -2000');
     this.db.pragma('page_size = 4096');
     this.db.pragma('temp_store = MEMORY');
+    this.db.pragma('mmap_size = 30000000000'); // 30GB mmap for performance
+    this.db.pragma('optimize'); // Optimize database on startup
     
     this.initTables();
     this.setupCheckpointing();
@@ -230,10 +233,54 @@ export class Database {
     stmt.run(appId);
   }
 
+  /**
+   * Execute operations within a transaction
+   */
+  transaction<T>(fn: () => T): T {
+    const txn = this.db.transaction(fn);
+    return txn();
+  }
+
+  /**
+   * Execute async operations within a transaction
+   */
+  async transactionAsync<T>(fn: () => Promise<T>): Promise<T> {
+    // SQLite transactions must be synchronous, so we wrap the async operation
+    let result: T;
+    let error: Error | null = null;
+
+    this.db.transaction(() => {
+      fn()
+        .then((res) => {
+          result = res;
+        })
+        .catch((err) => {
+          error = err;
+        });
+    })();
+
+    if (error) {
+      throw error;
+    }
+
+    return result!;
+  }
+
+  /**
+   * Gracefully close database with final checkpoint
+   */
   close(): void {
     if (this.checkpointInterval) {
       clearInterval(this.checkpointInterval);
     }
+
+    try {
+      // Final checkpoint before closing
+      this.db.pragma('wal_checkpoint(TRUNCATE)');
+    } catch (error) {
+      console.error('Error during final WAL checkpoint:', error);
+    }
+
     this.db.close();
   }
 }
