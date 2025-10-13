@@ -198,7 +198,7 @@ export class AppController {
     } catch (error) {
       logger.warn('Error inferring from action', {
         correlationId,
-        message: (error as Error).message,
+        errorMessage: (error as Error).message,
       });
       return [];
     }
