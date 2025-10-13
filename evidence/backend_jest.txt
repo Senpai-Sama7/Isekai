@@ -1,0 +1,316 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> @isekai/backend@1.0.0 test
+> jest --runInBand
+
+PASS tests/appController.test.ts
+  ● Console
+
+    console.error
+      Error modifying app: Error: Modification failed
+          at Object.<anonymous> (/workspace/Isekai/packages/backend/tests/appController.test.ts:369:9)
+          at Promise.finally.completed (/workspace/Isekai/node_modules/jest-circus/build/jestAdapterInit.js:1557:28)
+          at new Promise (<anonymous>)
+          at callAsyncCircusFn (/workspace/Isekai/node_modules/jest-circus/build/jestAdapterInit.js:1497:10)
+          at _callCircusTest (/workspace/Isekai/node_modules/jest-circus/build/jestAdapterInit.js:1007:40)
+          at _runTest (/workspace/Isekai/node_modules/jest-circus/build/jestAdapterInit.js:947:3)
+          at /workspace/Isekai/node_modules/jest-circus/build/jestAdapterInit.js:849:7
+          at _runTestsForDescribeBlock (/workspace/Isekai/node_modules/jest-circus/build/jestAdapterInit.js:862:11)
+          at _runTestsForDescribeBlock (/workspace/Isekai/node_modules/jest-circus/build/jestAdapterInit.js:857:11)
+          at _runTestsForDescribeBlock (/workspace/Isekai/node_modules/jest-circus/build/jestAdapterInit.js:857:11)
+          at run (/workspace/Isekai/node_modules/jest-circus/build/jestAdapterInit.js:761:3)
+          at runAndTransformResultsToJestFormat (/workspace/Isekai/node_modules/jest-circus/build/jestAdapterInit.js:1918:21)
+          at jestAdapter (/workspace/Isekai/node_modules/jest-circus/build/runner.js:101:19)
+          at runTestInternal (/workspace/Isekai/node_modules/jest-runner/build/index.js:275:16)
+          at runTest (/workspace/Isekai/node_modules/jest-runner/build/index.js:343:7)
+
+      126 |       return this.getApp(appId);
+      127 |     } catch (error) {
+    > 128 |       console.error('Error modifying app:', error);
+          |               ^
+      129 |       throw error;
+      130 |     }
+      131 |   }
+
+      at AppController.modifyApp (src/controllers/appController.ts:128:15)
+      at Object.<anonymous> (tests/appController.test.ts:372:7)
+
+    console.error
+      Error stopping app in sandbox: Error: Stop failed
+          at Object.<anonymous> (/workspace/Isekai/packages/backend/tests/appController.test.ts:421:49)
+          at Promise.finally.completed (/workspace/Isekai/node_modules/jest-circus/build/jestAdapterInit.js:1557:28)
+          at new Promise (<anonymous>)
+          at callAsyncCircusFn (/workspace/Isekai/node_modules/jest-circus/build/jestAdapterInit.js:1497:10)
+          at _callCircusTest (/workspace/Isekai/node_modules/jest-circus/build/jestAdapterInit.js:1007:40)
+          at _runTest (/workspace/Isekai/node_modules/jest-circus/build/jestAdapterInit.js:947:3)
+          at /workspace/Isekai/node_modules/jest-circus/build/jestAdapterInit.js:849:7
+          at _runTestsForDescribeBlock (/workspace/Isekai/node_modules/jest-circus/build/jestAdapterInit.js:862:11)
+          at _runTestsForDescribeBlock (/workspace/Isekai/node_modules/jest-circus/build/jestAdapterInit.js:857:11)
+          at _runTestsForDescribeBlock (/workspace/Isekai/node_modules/jest-circus/build/jestAdapterInit.js:857:11)
+          at run (/workspace/Isekai/node_modules/jest-circus/build/jestAdapterInit.js:761:3)
+          at runAndTransformResultsToJestFormat (/workspace/Isekai/node_modules/jest-circus/build/jestAdapterInit.js:1918:21)
+          at jestAdapter (/workspace/Isekai/node_modules/jest-circus/build/runner.js:101:19)
+          at runTestInternal (/workspace/Isekai/node_modules/jest-runner/build/index.js:275:16)
+          at runTest (/workspace/Isekai/node_modules/jest-runner/build/index.js:343:7)
+
+      138 |       await this.sandboxService.stop(appId);
+      139 |     } catch (error) {
+    > 140 |       console.error('Error stopping app in sandbox:', error);
+          |               ^
+      141 |     }
+      142 |
+      143 |     return this.db.deleteApp(appId);
+
+      at AppController.deleteApp (src/controllers/appController.ts:140:15)
+      at Object.<anonymous> (tests/appController.test.ts:424:22)
+
+    console.error
+      Error inferring from action: Error: Inference failed
+          at Object.<anonymous> (/workspace/Isekai/packages/backend/tests/appController.test.ts:500:50)
+          at Promise.finally.completed (/workspace/Isekai/node_modules/jest-circus/build/jestAdapterInit.js:1557:28)
+          at new Promise (<anonymous>)
+          at callAsyncCircusFn (/workspace/Isekai/node_modules/jest-circus/build/jestAdapterInit.js:1497:10)
+          at _callCircusTest (/workspace/Isekai/node_modules/jest-circus/build/jestAdapterInit.js:1007:40)
+          at _runTest (/workspace/Isekai/node_modules/jest-circus/build/jestAdapterInit.js:947:3)
+          at /workspace/Isekai/node_modules/jest-circus/build/jestAdapterInit.js:849:7
+          at _runTestsForDescribeBlock (/workspace/Isekai/node_modules/jest-circus/build/jestAdapterInit.js:862:11)
+          at _runTestsForDescribeBlock (/workspace/Isekai/node_modules/jest-circus/build/jestAdapterInit.js:857:11)
+          at _runTestsForDescribeBlock (/workspace/Isekai/node_modules/jest-circus/build/jestAdapterInit.js:857:11)
+          at run (/workspace/Isekai/node_modules/jest-circus/build/jestAdapterInit.js:761:3)
+          at runAndTransformResultsToJestFormat (/workspace/Isekai/node_modules/jest-circus/build/jestAdapterInit.js:1918:21)
+          at jestAdapter (/workspace/Isekai/node_modules/jest-circus/build/runner.js:101:19)
+          at runTestInternal (/workspace/Isekai/node_modules/jest-runner/build/index.js:275:16)
+          at runTest (/workspace/Isekai/node_modules/jest-runner/build/index.js:343:7)
+
+      184 |       return suggestions;
+      185 |     } catch (error) {
+    > 186 |       console.error('Error inferring from action:', error);
+          |               ^
+      187 |       return [];
+      188 |     }
+      189 |   }
+
+      at AppController.trackAction (src/controllers/appController.ts:186:15)
+      at Object.<anonymous> (tests/appController.test.ts:502:22)
+
+PASS tests/apps.test.ts
+  ● Console
+
+    console.error
+      Error generating app: Error: Generation failed
+          at Object.<anonymous> (/workspace/Isekai/packages/backend/tests/apps.test.ts:94:41)
+          at Promise.finally.completed (/workspace/Isekai/node_modules/jest-circus/build/jestAdapterInit.js:1557:28)
+          at new Promise (<anonymous>)
+          at callAsyncCircusFn (/workspace/Isekai/node_modules/jest-circus/build/jestAdapterInit.js:1497:10)
+          at _callCircusTest (/workspace/Isekai/node_modules/jest-circus/build/jestAdapterInit.js:1007:40)
+          at processTicksAndRejections (node:internal/process/task_queues:105:5)
+          at _runTest (/workspace/Isekai/node_modules/jest-circus/build/jestAdapterInit.js:947:3)
+          at /workspace/Isekai/node_modules/jest-circus/build/jestAdapterInit.js:849:7
+          at _runTestsForDescribeBlock (/workspace/Isekai/node_modules/jest-circus/build/jestAdapterInit.js:862:11)
+          at _runTestsForDescribeBlock (/workspace/Isekai/node_modules/jest-circus/build/jestAdapterInit.js:857:11)
+          at _runTestsForDescribeBlock (/workspace/Isekai/node_modules/jest-circus/build/jestAdapterInit.js:857:11)
+          at run (/workspace/Isekai/node_modules/jest-circus/build/jestAdapterInit.js:761:3)
+          at runAndTransformResultsToJestFormat (/workspace/Isekai/node_modules/jest-circus/build/jestAdapterInit.js:1918:21)
+          at jestAdapter (/workspace/Isekai/node_modules/jest-circus/build/runner.js:101:19)
+          at runTestInternal (/workspace/Isekai/node_modules/jest-runner/build/index.js:275:16)
+          at runTest (/workspace/Isekai/node_modules/jest-runner/build/index.js:343:7)
+
+      25 |     res.status(201).json(app);
+      26 |   } catch (error) {
+    > 27 |     console.error('Error generating app:', error);
+         |             ^
+      28 |     res.status(500).json({ error: 'Failed to generate app' });
+      29 |   }
+      30 | });
+
+      at src/routes/apps.ts:27:13
+
+    console.error
+      Error listing apps: Error: Database error
+          at Object.<anonymous> (/workspace/Isekai/packages/backend/tests/apps.test.ts:153:15)
+          at /workspace/Isekai/node_modules/jest-mock/build/index.js:305:39
+          at Object.<anonymous> (/workspace/Isekai/node_modules/jest-mock/build/index.js:312:13)
+          at Object.mockConstructor [as listApps] (/workspace/Isekai/node_modules/jest-mock/build/index.js:102:19)
+          at /workspace/Isekai/packages/backend/src/routes/apps.ts:38:31
+          at Layer.handleRequest (/workspace/Isekai/node_modules/router/lib/layer.js:152:17)
+          at next (/workspace/Isekai/node_modules/router/lib/route.js:157:13)
+          at handleValidationErrors (/workspace/Isekai/packages/backend/src/middleware/validation.ts:13:3)
+          at Layer.handleRequest (/workspace/Isekai/node_modules/router/lib/layer.js:152:17)
+          at next (/workspace/Isekai/node_modules/router/lib/route.js:157:13)
+          at middleware (/workspace/Isekai/node_modules/express-validator/lib/middlewares/check.js:16:13)
+          at processTicksAndRejections (node:internal/process/task_queues:105:5)
+
+      39 |     res.json(result);
+      40 |   } catch (error) {
+    > 41 |     console.error('Error listing apps:', error);
+         |             ^
+      42 |     res.status(500).json({ error: 'Failed to list apps' });
+      43 |   }
+      44 | });
+
+      at src/routes/apps.ts:41:13
+      at Layer.handleRequest (../../node_modules/router/lib/layer.js:152:17)
+      at next (../../node_modules/router/lib/route.js:157:13)
+      at handleValidationErrors (src/middleware/validation.ts:13:3)
+      at Layer.handleRequest (../../node_modules/router/lib/layer.js:152:17)
+      at next (../../node_modules/router/lib/route.js:157:13)
+      at middleware (../../node_modules/express-validator/lib/middlewares/check.js:16:13)
+
+    console.error
+      Error getting app: Error: Database error
+          at Object.<anonymous> (/workspace/Isekai/packages/backend/tests/apps.test.ts:194:15)
+          at /workspace/Isekai/node_modules/jest-mock/build/index.js:305:39
+          at Object.<anonymous> (/workspace/Isekai/node_modules/jest-mock/build/index.js:312:13)
+          at Object.mockConstructor [as getApp] (/workspace/Isekai/node_modules/jest-mock/build/index.js:102:19)
+          at /workspace/Isekai/packages/backend/src/routes/apps.ts:49:28
+          at Layer.handleRequest (/workspace/Isekai/node_modules/router/lib/layer.js:152:17)
+          at next (/workspace/Isekai/node_modules/router/lib/route.js:157:13)
+          at handleValidationErrors (/workspace/Isekai/packages/backend/src/middleware/validation.ts:13:3)
+          at Layer.handleRequest (/workspace/Isekai/node_modules/router/lib/layer.js:152:17)
+          at next (/workspace/Isekai/node_modules/router/lib/route.js:157:13)
+          at middleware (/workspace/Isekai/node_modules/express-validator/lib/middlewares/check.js:16:13)
+          at processTicksAndRejections (node:internal/process/task_queues:105:5)
+
+      55 |     res.json(app);
+      56 |   } catch (error) {
+    > 57 |     console.error('Error getting app:', error);
+         |             ^
+      58 |     res.status(500).json({ error: 'Failed to get app' });
+      59 |   }
+      60 | });
+
+      at src/routes/apps.ts:57:13
+      at Layer.handleRequest (../../node_modules/router/lib/layer.js:152:17)
+      at next (../../node_modules/router/lib/route.js:157:13)
+      at handleValidationErrors (src/middleware/validation.ts:13:3)
+      at Layer.handleRequest (../../node_modules/router/lib/layer.js:152:17)
+      at next (../../node_modules/router/lib/route.js:157:13)
+      at middleware (../../node_modules/express-validator/lib/middlewares/check.js:16:13)
+
+    console.error
+      Error updating app: Error: Update failed
+          at Object.<anonymous> (/workspace/Isekai/packages/backend/tests/apps.test.ts:264:39)
+          at Promise.finally.completed (/workspace/Isekai/node_modules/jest-circus/build/jestAdapterInit.js:1557:28)
+          at new Promise (<anonymous>)
+          at callAsyncCircusFn (/workspace/Isekai/node_modules/jest-circus/build/jestAdapterInit.js:1497:10)
+          at _callCircusTest (/workspace/Isekai/node_modules/jest-circus/build/jestAdapterInit.js:1007:40)
+          at processTicksAndRejections (node:internal/process/task_queues:105:5)
+          at _runTest (/workspace/Isekai/node_modules/jest-circus/build/jestAdapterInit.js:947:3)
+          at /workspace/Isekai/node_modules/jest-circus/build/jestAdapterInit.js:849:7
+          at _runTestsForDescribeBlock (/workspace/Isekai/node_modules/jest-circus/build/jestAdapterInit.js:862:11)
+          at _runTestsForDescribeBlock (/workspace/Isekai/node_modules/jest-circus/build/jestAdapterInit.js:857:11)
+          at _runTestsForDescribeBlock (/workspace/Isekai/node_modules/jest-circus/build/jestAdapterInit.js:857:11)
+          at run (/workspace/Isekai/node_modules/jest-circus/build/jestAdapterInit.js:761:3)
+          at runAndTransformResultsToJestFormat (/workspace/Isekai/node_modules/jest-circus/build/jestAdapterInit.js:1918:21)
+          at jestAdapter (/workspace/Isekai/node_modules/jest-circus/build/runner.js:101:19)
+          at runTestInternal (/workspace/Isekai/node_modules/jest-runner/build/index.js:275:16)
+          at runTest (/workspace/Isekai/node_modules/jest-runner/build/index.js:343:7)
+
+      73 |     res.json(app);
+      74 |   } catch (error) {
+    > 75 |     console.error('Error updating app:', error);
+         |             ^
+      76 |     res.status(500).json({ error: 'Failed to update app' });
+      77 |   }
+      78 | });
+
+      at src/routes/apps.ts:75:13
+
+    console.error
+      Error deleting app: Error: Delete failed
+          at Object.<anonymous> (/workspace/Isekai/packages/backend/tests/apps.test.ts:297:39)
+          at Promise.finally.completed (/workspace/Isekai/node_modules/jest-circus/build/jestAdapterInit.js:1557:28)
+          at new Promise (<anonymous>)
+          at callAsyncCircusFn (/workspace/Isekai/node_modules/jest-circus/build/jestAdapterInit.js:1497:10)
+          at _callCircusTest (/workspace/Isekai/node_modules/jest-circus/build/jestAdapterInit.js:1007:40)
+          at processTicksAndRejections (node:internal/process/task_queues:105:5)
+          at _runTest (/workspace/Isekai/node_modules/jest-circus/build/jestAdapterInit.js:947:3)
+          at /workspace/Isekai/node_modules/jest-circus/build/jestAdapterInit.js:849:7
+          at _runTestsForDescribeBlock (/workspace/Isekai/node_modules/jest-circus/build/jestAdapterInit.js:862:11)
+          at _runTestsForDescribeBlock (/workspace/Isekai/node_modules/jest-circus/build/jestAdapterInit.js:857:11)
+          at _runTestsForDescribeBlock (/workspace/Isekai/node_modules/jest-circus/build/jestAdapterInit.js:857:11)
+          at run (/workspace/Isekai/node_modules/jest-circus/build/jestAdapterInit.js:761:3)
+          at runAndTransformResultsToJestFormat (/workspace/Isekai/node_modules/jest-circus/build/jestAdapterInit.js:1918:21)
+          at jestAdapter (/workspace/Isekai/node_modules/jest-circus/build/runner.js:101:19)
+          at runTestInternal (/workspace/Isekai/node_modules/jest-runner/build/index.js:275:16)
+          at runTest (/workspace/Isekai/node_modules/jest-runner/build/index.js:343:7)
+
+      89 |     res.status(204).send();
+      90 |   } catch (error) {
+    > 91 |     console.error('Error deleting app:', error);
+         |             ^
+      92 |     res.status(500).json({ error: 'Failed to delete app' });
+      93 |   }
+      94 | });
+
+      at src/routes/apps.ts:91:13
+
+    console.error
+      Error tracking action: Error: Tracking failed
+          at Object.<anonymous> (/workspace/Isekai/packages/backend/tests/apps.test.ts:346:41)
+          at Promise.finally.completed (/workspace/Isekai/node_modules/jest-circus/build/jestAdapterInit.js:1557:28)
+          at new Promise (<anonymous>)
+          at callAsyncCircusFn (/workspace/Isekai/node_modules/jest-circus/build/jestAdapterInit.js:1497:10)
+          at _callCircusTest (/workspace/Isekai/node_modules/jest-circus/build/jestAdapterInit.js:1007:40)
+          at processTicksAndRejections (node:internal/process/task_queues:105:5)
+          at _runTest (/workspace/Isekai/node_modules/jest-circus/build/jestAdapterInit.js:947:3)
+          at /workspace/Isekai/node_modules/jest-circus/build/jestAdapterInit.js:849:7
+          at _runTestsForDescribeBlock (/workspace/Isekai/node_modules/jest-circus/build/jestAdapterInit.js:862:11)
+          at _runTestsForDescribeBlock (/workspace/Isekai/node_modules/jest-circus/build/jestAdapterInit.js:857:11)
+          at _runTestsForDescribeBlock (/workspace/Isekai/node_modules/jest-circus/build/jestAdapterInit.js:857:11)
+          at run (/workspace/Isekai/node_modules/jest-circus/build/jestAdapterInit.js:761:3)
+          at runAndTransformResultsToJestFormat (/workspace/Isekai/node_modules/jest-circus/build/jestAdapterInit.js:1918:21)
+          at jestAdapter (/workspace/Isekai/node_modules/jest-circus/build/runner.js:101:19)
+          at runTestInternal (/workspace/Isekai/node_modules/jest-runner/build/index.js:275:16)
+          at runTest (/workspace/Isekai/node_modules/jest-runner/build/index.js:343:7)
+
+      102 |     res.json({ suggestions });
+      103 |   } catch (error) {
+    > 104 |     console.error('Error tracking action:', error);
+          |             ^
+      105 |     res.status(500).json({ error: 'Failed to track action' });
+      106 |   }
+      107 | });
+
+      at src/routes/apps.ts:104:13
+
+    console.error
+      Error applying suggestion: Error: Apply failed
+          at Object.<anonymous> (/workspace/Isekai/packages/backend/tests/apps.test.ts:388:45)
+          at Promise.finally.completed (/workspace/Isekai/node_modules/jest-circus/build/jestAdapterInit.js:1557:28)
+          at new Promise (<anonymous>)
+          at callAsyncCircusFn (/workspace/Isekai/node_modules/jest-circus/build/jestAdapterInit.js:1497:10)
+          at _callCircusTest (/workspace/Isekai/node_modules/jest-circus/build/jestAdapterInit.js:1007:40)
+          at processTicksAndRejections (node:internal/process/task_queues:105:5)
+          at _runTest (/workspace/Isekai/node_modules/jest-circus/build/jestAdapterInit.js:947:3)
+          at /workspace/Isekai/node_modules/jest-circus/build/jestAdapterInit.js:849:7
+          at _runTestsForDescribeBlock (/workspace/Isekai/node_modules/jest-circus/build/jestAdapterInit.js:862:11)
+          at _runTestsForDescribeBlock (/workspace/Isekai/node_modules/jest-circus/build/jestAdapterInit.js:857:11)
+          at _runTestsForDescribeBlock (/workspace/Isekai/node_modules/jest-circus/build/jestAdapterInit.js:857:11)
+          at run (/workspace/Isekai/node_modules/jest-circus/build/jestAdapterInit.js:761:3)
+          at runAndTransformResultsToJestFormat (/workspace/Isekai/node_modules/jest-circus/build/jestAdapterInit.js:1918:21)
+          at jestAdapter (/workspace/Isekai/node_modules/jest-circus/build/runner.js:101:19)
+          at runTestInternal (/workspace/Isekai/node_modules/jest-runner/build/index.js:275:16)
+          at runTest (/workspace/Isekai/node_modules/jest-runner/build/index.js:343:7)
+
+      120 |     res.json(app);
+      121 |   } catch (error) {
+    > 122 |     console.error('Error applying suggestion:', error);
+          |             ^
+      123 |     res.status(500).json({ error: 'Failed to apply suggestion' });
+      124 |   }
+      125 | });
+
+      at src/routes/apps.ts:122:13
+
+PASS tests/smoke.test.ts
+PASS tests/localIntegration.test.ts
+
+Test Suites: 4 passed, 4 total
+Tests:       54 passed, 54 total
+Snapshots:   0 total
+Time:        6.907 s
+Ran all test suites.
+Jest did not exit one second after the test run has completed.
+
+'This usually means that there are asynchronous operations that weren't stopped in your tests. Consider running Jest with `--detectOpenHandles` to troubleshoot this issue.
