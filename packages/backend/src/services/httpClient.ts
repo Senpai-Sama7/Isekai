@@ -61,7 +61,8 @@ export function createHttpClient({ baseURL, timeout, serviceName }: HttpClientOp
         const err = error as Error;
         logger.error('HTTP client call failed', {
           serviceName,
-          message: err.message,
+          errorMessage: err.message,
+          stack: err.stack,
         });
         throw error;
       });
