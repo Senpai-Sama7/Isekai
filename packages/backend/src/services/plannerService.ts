@@ -2,7 +2,8 @@ import { LocalPlanner } from './localPlanner';
 import { createHttpClient } from './httpClient';
 import { logger } from '../observability/logger';
 
-const REMOTE_PLANNER_URL = process.env.PLANNER_URL || 'http://localhost:8001';
+const DEFAULT_PLANNER_PORT = process.env.PLANNER_PORT || '8090';
+const REMOTE_PLANNER_URL = process.env.PLANNER_URL || `http://localhost:${DEFAULT_PLANNER_PORT}`;
 
 function shouldUseRemotePlanner(): boolean {
   if (!process.env.PLANNER_URL) {

@@ -22,7 +22,8 @@ healthRouter.get('/', async (req: Request, res: Response) => {
   }
 
   // Check planner service
-  const plannerUrl = process.env.PLANNER_URL || 'http://localhost:8001';
+  const plannerPort = process.env.PLANNER_PORT || '8090';
+  const plannerUrl = process.env.PLANNER_URL || `http://localhost:${plannerPort}`;
   try {
     await axios.get(`${plannerUrl}/health`, { timeout: 2000 });
     services.planner = 'ok';
@@ -31,7 +32,8 @@ healthRouter.get('/', async (req: Request, res: Response) => {
   }
 
   // Check sandbox service
-  const sandboxUrl = process.env.SANDBOX_URL || 'http://localhost:8002';
+  const sandboxPort = process.env.SANDBOX_PORT || '8070';
+  const sandboxUrl = process.env.SANDBOX_URL || `http://localhost:${sandboxPort}`;
   try {
     await axios.get(`${sandboxUrl}/health`, { timeout: 2000 });
     services.sandbox = 'ok';

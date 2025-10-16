@@ -45,12 +45,13 @@ export interface ApplySuggestionRequest {
 
 export interface Suggestion {
   id: string;
-  appId: string;
+  appId?: string;
   title: string;
   description: string;
   changes: Record<string, string>;
-  createdAt: string;
+  createdAt?: string;
   confidence?: number;
+  modificationPrompt?: string;
 }
 
 export interface ListAppsQuery {

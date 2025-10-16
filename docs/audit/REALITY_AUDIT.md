@@ -6,8 +6,8 @@
 |-------------|--------|-------|
 | Node.js >= 18 | Available | `node -v` reports v22.19.0 (system default). |
 | npm >= 9 | Available | `npm -v` reports 11.4.2. |
-| Planner service running on `http://localhost:8001` | Missing | Smoke test logs and health probe show `ECONNREFUSED`. |
-| Sandbox service running on `http://localhost:8002` | Missing | Smoke test logs and health probe show `ECONNREFUSED`. |
+| Planner service running on `http://localhost:8090` | Missing | Smoke test logs and health probe show `ECONNREFUSED`. |
+| Sandbox service running on `http://localhost:8070` | Missing | Smoke test logs and health probe show `ECONNREFUSED`. |
 | SQLite write permissions | Available | Backend initializes local DB without error during tests. |
 
 ## How to Run
@@ -32,8 +32,8 @@
    - Use `Ctrl+C` in each terminal.
 
 Environment variables of interest:
-- `PLANNER_URL` (defaults to `http://localhost:8001`).
-- `SANDBOX_URL` (defaults to `http://localhost:8002`).
+- `PLANNER_URL` (defaults to `http://localhost:8090`).
+- `SANDBOX_URL` (defaults to `http://localhost:8070`).
 - `FRONTEND_URL` for backend CORS policy.
 
 ## Artifacts Written
@@ -52,8 +52,8 @@ Environment variables of interest:
 | ID | Feature | Command | Expected Signal | Status | Evidence |
 |----|---------|---------|-----------------|--------|----------|
 | F1 | Backend CSV app generation flow | `make smoke-test` | Jest suite passes, CSV viewer assets persisted | VERIFIED | [`evidence/make_smoke-test.txt`](../../evidence/make_smoke-test.txt) |
-| F2 | Planner service health endpoint responds | `curl -s -o "%{http_code}" http://localhost:8001/health` | HTTP 200 JSON payload | UNVERIFIED | [`evidence/curl_planner_health.txt`](../../evidence/curl_planner_health.txt) |
-| F3 | Sandbox service health endpoint responds | `curl -s -o "%{http_code}" http://localhost:8002/health` | HTTP 200 JSON payload | UNVERIFIED | [`evidence/curl_sandbox_health.txt`](../../evidence/curl_sandbox_health.txt) |
+| F2 | Planner service health endpoint responds | `curl -s -o "%{http_code}" http://localhost:8090/health` | HTTP 200 JSON payload | UNVERIFIED | [`evidence/curl_planner_health.txt`](../../evidence/curl_planner_health.txt) |
+| F3 | Sandbox service health endpoint responds | `curl -s -o "%{http_code}" http://localhost:8070/health` | HTTP 200 JSON payload | UNVERIFIED | [`evidence/curl_sandbox_health.txt`](../../evidence/curl_sandbox_health.txt) |
 
 ## Observations
 
@@ -70,8 +70,8 @@ _No fixes were attempted; investigation only._
 
 | ID | Hypotheses | Actionable Solutions | Verification Steps |
 |----|------------|----------------------|--------------------|
-| F2 | Planner service is not running; no process bound to port 8001. | Implement or start planner server (`packages/planner`) and expose `/analyze` and `/health` endpoints. | 1. `npm run dev:planner`.<br>2. `curl http://localhost:8001/health` should return HTTP 200 with status payload.<br>3. Re-run `make smoke-test` to confirm planner calls succeed without fallback logs. |
-| F3 | Sandbox service is not running; no process bound to port 8002. | Launch sandbox runtime (`packages/sandbox`) exposing `/health`, `/execute`, `/apps/:id`. Ensure network access between backend and sandbox. | 1. `npm run dev:sandbox`.<br>2. `curl http://localhost:8002/health` should return HTTP 200 JSON.<br>3. Re-run `make smoke-test` and confirm sandbox logs show real execution instead of fallback. |
+| F2 | Planner service is not running; no process bound to port 8090. | Implement or start planner server (`packages/planner`) and expose `/analyze` and `/health` endpoints. | 1. `npm run dev:planner`.<br>2. `curl http://localhost:8090/health` should return HTTP 200 with status payload.<br>3. Re-run `make smoke-test` to confirm planner calls succeed without fallback logs. |
+| F3 | Sandbox service is not running; no process bound to port 8070. | Launch sandbox runtime (`packages/sandbox`) exposing `/health`, `/execute`, `/apps/:id`. Ensure network access between backend and sandbox. | 1. `npm run dev:sandbox`.<br>2. `curl http://localhost:8070/health` should return HTTP 200 JSON.<br>3. Re-run `make smoke-test` and confirm sandbox logs show real execution instead of fallback. |
 
 ## Readiness Verdict
 

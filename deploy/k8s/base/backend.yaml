@@ -17,6 +17,13 @@ spec:
         - name: backend
           image: ghcr.io/your-org/backend:latest
           ports: [ { containerPort: 8080 } ]
+          env:
+            - name: PLANNER_URL
+              value: "http://planner:8090"
+            - name: SANDBOX_URL
+              value: "http://sandbox:8070"
+            - name: DB_PATH
+              value: "/app/packages/data/isekai.db"
           readinessProbe:
             httpGet: { path: /health, port: 8080 }
           livenessProbe:

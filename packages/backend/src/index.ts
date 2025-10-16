@@ -15,7 +15,7 @@ import { validateOrigins } from './utils/security';
 dotenv.config();
 
 const app: Application = express();
-const PORT = process.env.PORT || 8000;
+const PORT = Number(process.env.PORT || process.env.BACKEND_PORT || 8080);
 
 // Initialize database
 Database.getInstance();

@@ -25,9 +25,9 @@ make dev
 
 Services will be available at:
 - Frontend: http://localhost:3000
-- Backend API: http://localhost:8000
-- Planner Service: http://localhost:8001
-- Sandbox Runtime: http://localhost:8002
+- Backend API: http://localhost:8080
+- Planner Service: http://localhost:8090
+- Sandbox Runtime: http://localhost:8070
 
 ## Production Deployment
 
@@ -48,9 +48,9 @@ make smoke-test
 
 #### Backend (.env)
 ```
-PORT=8000
-PLANNER_URL=http://planner:8001
-SANDBOX_URL=http://sandbox:8002
+PORT=8080
+PLANNER_URL=http://planner:8090
+SANDBOX_URL=http://sandbox:8070
 DB_PATH=/data/isekai.db
 NODE_ENV=production
 ```
@@ -62,13 +62,13 @@ REACT_APP_API_URL=https://api.yourdomain.com
 
 #### Planner (.env)
 ```
-PORT=8001
+PORT=8090
 NODE_ENV=production
 ```
 
 #### Sandbox (.env)
 ```
-PORT=8002
+PORT=8070
 WORKSPACE_DIR=/var/lib/isekai/apps
 NODE_ENV=production
 ```
@@ -86,10 +86,10 @@ services:
       context: .
       dockerfile: packages/backend/Dockerfile
     ports:
-      - "8000:8000"
+      - "8080:8080"
     environment:
-      - PLANNER_URL=http://planner:8001
-      - SANDBOX_URL=http://sandbox:8002
+      - PLANNER_URL=http://planner:8090
+      - SANDBOX_URL=http://sandbox:8070
     volumes:
       - ./data:/data
     depends_on:
@@ -101,14 +101,14 @@ services:
       context: .
       dockerfile: packages/planner/Dockerfile
     ports:
-      - "8001:8001"
+      - "8090:8090"
 
   sandbox:
     build:
       context: .
       dockerfile: packages/sandbox/Dockerfile
     ports:
-      - "8002:8002"
+      - "8070:8070"
       - "9000-9100:9000-9100"
     volumes:
       - ./runtime:/var/lib/isekai/apps
@@ -121,7 +121,7 @@ services:
     ports:
       - "3000:80"
     environment:
-      - REACT_APP_API_URL=http://localhost:8000
+      - REACT_APP_API_URL=http://localhost:8080
     depends_on:
       - backend
 ```
@@ -150,12 +150,12 @@ spec:
       - name: backend
         image: isekai/backend:latest
         ports:
-        - containerPort: 8000
+        - containerPort: 8080
         env:
         - name: PLANNER_URL
-          value: "http://isekai-planner:8001"
+          value: "http://isekai-planner:8090"
         - name: SANDBOX_URL
-          value: "http://isekai-sandbox:8002"
+          value: "http://isekai-sandbox:8070"
 ```
 
 ### Cloud Deployment Options
@@ -201,9 +201,9 @@ spec:
 #### Health Checks
 All services expose `/health` endpoints:
 ```bash
-curl http://localhost:8000/api/health
-curl http://localhost:8001/health
-curl http://localhost:8002/health
+curl http://localhost:8080/api/health
+curl http://localhost:8090/health
+curl http://localhost:8070/health
 ```
 
 #### Metrics
@@ -243,7 +243,7 @@ sqlite3 /data/isekai.db ".backup /backups/isekai-$(date +%Y%m%d).db"
 ### Troubleshooting
 
 #### Services won't start
-- Check port availability: `lsof -i :8000`
+- Check port availability: `lsof -i :8080`
 - Verify environment variables
 - Check logs: `npm run dev` in each package
 

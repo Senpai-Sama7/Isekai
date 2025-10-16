@@ -10,7 +10,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const app: Application = express();
-const PORT = process.env.PORT || 8001;
+const PORT = Number(process.env.PORT || process.env.PLANNER_PORT || 8090);
 
 const analyzer = new IntentAnalyzer();
 const generator = new CodeGenerator();
@@ -25,7 +25,7 @@ app.use(helmet({
 const corsOptions = {
   origin: process.env.NODE_ENV === 'production' 
     ? (process.env.ALLOWED_ORIGINS || '').split(',').filter(Boolean)
-    : ['http://localhost:8000', 'http://localhost:3000'],
+    : ['http://localhost:8080', 'http://localhost:3000'],
   credentials: true,
   optionsSuccessStatus: 200
 };

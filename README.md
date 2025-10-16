@@ -84,14 +84,14 @@
 │  ┌─────────┐  ┌─────────┐  ┌─────────┐ │
 │  │Frontend │→ │Backend  │→ │Planner  │ │
 │  │React SPA│  │Express  │  │AI/NLP   │ │
-│  │:3001    │  │:8003    │  │:8001    │ │
+│  │:3001    │  │:8080    │  │:8090    │ │
 │  └─────────┘  └────┬────┘  └─────────┘ │
 │                    │                    │
 │                    ↓                    │
 │               ┌─────────┐               │
 │               │Sandbox  │               │
 │               │Isolated │               │
-│               │:8002    │               │
+│               │:8070    │               │
 │               └─────────┘               │
 └─────────────────────────────────────────┘
        │
@@ -108,9 +108,9 @@ The system consists of four main components:
 | Component | Technology | Port | Purpose |
 |-----------|-----------|------|---------|
 | **Frontend** | React 18 + TypeScript | 3001 | User interface & interaction |
-| **Backend** | Express 5 + SQLite | 8003 | API orchestration & coordination |
-| **Planner** | NLP/AI Service | 8001 | Intent analysis & code generation |
-| **Sandbox** | Isolated Runtime | 8002 | Secure code execution |
+| **Backend** | Express 5 + SQLite | 8080 | API orchestration & coordination |
+| **Planner** | NLP/AI Service | 8090 | Intent analysis & code generation |
+| **Sandbox** | Isolated Runtime | 8070 | Secure code execution |
 
 ---
 
@@ -139,9 +139,9 @@ npm run dev
 
 # 4️⃣ Access the application
 # Frontend: http://localhost:3001
-# Backend API: http://localhost:8003
-# Planner Service: http://localhost:8001
-# Sandbox Runtime: http://localhost:8002
+# Backend API: http://localhost:8080
+# Planner Service: http://localhost:8090
+# Sandbox Runtime: http://localhost:8070
 ```
 
 ### Alternative: Using Make
@@ -200,9 +200,9 @@ graph TB
     
     subgraph Isekai System
         Frontend[Frontend<br/>React SPA<br/>Port 3001]
-        Backend[Backend API<br/>Express.js<br/>Port 8003]
-        Planner[Planner Service<br/>NLP/AI<br/>Port 8001]
-        Sandbox[Sandbox Runtime<br/>Docker/VM<br/>Port 8002]
+        Backend[Backend API<br/>Express.js<br/>Port 8080]
+        Planner[Planner Service<br/>NLP/AI<br/>Port 8090]
+        Sandbox[Sandbox Runtime<br/>Docker/VM<br/>Port 8070]
     end
     
     DB[(SQLite DB)]
@@ -345,7 +345,7 @@ isekai/
 │   │   │   └── App.js        # Main application
 │   │   └── package.json
 │   │
-│   ├── 🔧 backend/           # Express API (Port 8000)
+│   ├── 🔧 backend/           # Express API (Port 8080)
 │   │   ├── src/
 │   │   │   ├── controllers/  # Request handlers
 │   │   │   ├── services/     # Business logic
@@ -357,13 +357,13 @@ isekai/
 │   │   │   └── index.ts      # Entry point
 │   │   └── package.json
 │   │
-│   ├── 🧠 planner/           # AI Service (Port 8001)
+│   ├── 🧠 planner/           # AI Service (Port 8090)
 │   │   ├── src/
 │   │   │   ├── services/     # Intent analyzer, code generator
 │   │   │   └── index.ts
 │   │   └── package.json
 │   │
-│   ├── 🏖️ sandbox/            # Runtime (Port 8002)
+│   ├── 🏖️ sandbox/            # Runtime (Port 8070)
 │   │   ├── src/
 │   │   │   ├── services/     # Sandbox manager
 │   │   │   └── index.ts

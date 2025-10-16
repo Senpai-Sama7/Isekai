@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import axios from 'axios';
 import './App.css';
 
-const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:8003';
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:8080';
 
 function App() {
   const [prompt, setPrompt] = useState('');
@@ -24,6 +24,7 @@ function App() {
     const suggestionInterval = setInterval(checkForSuggestions, 30000); // Every 30 seconds
 
     return () => clearInterval(suggestionInterval);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Track interactions with debouncing

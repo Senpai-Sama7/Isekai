@@ -14,9 +14,9 @@ make dev
 
 Wait for all services to start (about 30 seconds). You should see:
 ```
-Backend server running on http://localhost:8000
-Planner service running on http://localhost:8001
-Sandbox service running on http://localhost:8002
+Backend server running on http://localhost:8080
+Planner service running on http://localhost:8090
+Sandbox service running on http://localhost:8070
 Frontend available at http://localhost:3000
 ```
 
@@ -37,7 +37,7 @@ Frontend available at http://localhost:3000
 ### Generate a CSV Viewer App
 
 ```bash
-curl -X POST http://localhost:8000/api/apps/generate \
+curl -X POST http://localhost:8080/api/apps/generate \
   -H "Content-Type: application/json" \
   -d '{"prompt": "Create a CSV viewer app"}'
 ```
@@ -67,19 +67,19 @@ Response:
 ### List All Apps
 
 ```bash
-curl http://localhost:8000/api/apps
+curl http://localhost:8080/api/apps
 ```
 
 ### Get Specific App
 
 ```bash
-curl http://localhost:8000/api/apps/{appId}
+curl http://localhost:8080/api/apps/{appId}
 ```
 
 ### Modify an App
 
 ```bash
-curl -X PATCH http://localhost:8000/api/apps/{appId} \
+curl -X PATCH http://localhost:8080/api/apps/{appId} \
   -H "Content-Type: application/json" \
   -d '{"prompt": "Add sorting to the table"}'
 ```
@@ -87,13 +87,13 @@ curl -X PATCH http://localhost:8000/api/apps/{appId} \
 ### Delete an App
 
 ```bash
-curl -X DELETE http://localhost:8000/api/apps/{appId}
+curl -X DELETE http://localhost:8080/api/apps/{appId}
 ```
 
 ### Check System Health
 
 ```bash
-curl http://localhost:8000/api/health
+curl http://localhost:8080/api/health
 ```
 
 Response:
@@ -210,9 +210,9 @@ cat packages/sandbox/runtime/apps/{appId}/src/App.js
 ### Port Already in Use
 If ports are already in use, you can change them via environment variables:
 ```bash
-PORT=8000 cd packages/backend && npm run dev
-PORT=8001 cd packages/planner && npm run dev
-PORT=8002 cd packages/sandbox && npm run dev
+PORT=8080 cd packages/backend && npm run dev
+PORT=8090 cd packages/planner && npm run dev
+PORT=8070 cd packages/sandbox && npm run dev
 PORT=3000 cd packages/frontend && npm run dev
 ```
 

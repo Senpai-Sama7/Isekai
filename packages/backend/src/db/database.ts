@@ -242,31 +242,6 @@ export class Database {
   }
 
   /**
-   * Execute async operations within a transaction
-   */
-  async transactionAsync<T>(fn: () => Promise<T>): Promise<T> {
-    // SQLite transactions must be synchronous, so we wrap the async operation
-    let result: T;
-    let error: Error | null = null;
-
-    this.db.transaction(() => {
-      fn()
-        .then((res) => {
-          result = res;
-        })
-        .catch((err) => {
-          error = err;
-        });
-    })();
-
-    if (error) {
-      throw error;
-    }
-
-    return result!;
-  }
-
-  /**
    * Gracefully close database with final checkpoint
    */
   close(): void {

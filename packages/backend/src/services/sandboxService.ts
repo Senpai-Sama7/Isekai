@@ -8,7 +8,8 @@ import {
   validateTotalFilesSize
 } from '../utils/security';
 
-const SANDBOX_URL = process.env.SANDBOX_URL || 'http://localhost:8002';
+const DEFAULT_SANDBOX_PORT = process.env.SANDBOX_PORT || '8070';
+const SANDBOX_URL = process.env.SANDBOX_URL || `http://localhost:${DEFAULT_SANDBOX_PORT}`;
 const LOCAL_SANDBOX_ROOT = process.env.SANDBOX_ROOT || join(__dirname, '../../../data/sandbox-apps');
 
 function shouldUseRemoteSandbox(): boolean {

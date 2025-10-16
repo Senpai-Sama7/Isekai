@@ -2,7 +2,7 @@
 
 ## OpenAPI Specification
 
-### Backend API (Port 8000)
+### Backend API (Port 8080)
 
 ```yaml
 openapi: 3.0.0
@@ -12,7 +12,7 @@ info:
   description: API for managing AI-generated applications
 
 servers:
-  - url: http://localhost:8000
+  - url: http://localhost:8080
     description: Development server
 
 paths:
@@ -268,7 +268,7 @@ components:
           type: boolean
 ```
 
-### Planner Service API (Port 8001)
+### Planner Service API (Port 8090)
 
 ```yaml
 openapi: 3.0.0
@@ -341,7 +341,7 @@ paths:
                     type: number
 ```
 
-### Sandbox Service API (Port 8002)
+### Sandbox Service API (Port 8070)
 
 ```yaml
 openapi: 3.0.0
