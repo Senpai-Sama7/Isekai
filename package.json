@@ -7,8 +7,7 @@
     "packages/*"
   ],
   "scripts": {
-    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:planner\" \"npm run dev:frontend\" \"npm run dev:sandbox\"",
-    "dev:frontend": "cd packages/frontend && npm run dev",
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:planner\" \"npm run dev:sandbox\"",
     "dev:backend": "cd packages/backend && npm run dev",
     "dev:planner": "cd packages/planner && npm run dev",
     "dev:sandbox": "cd packages/sandbox && npm run dev",

@@ -1,14 +1,36 @@
 version: "3.9"
 services:
+  postgres:
+    image: postgres:15-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=isekai
+      - POSTGRES_PASSWORD=isekai
+      - POSTGRES_DB=isekai
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U isekai"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   backend:
     build: ../../packages/backend
     env_file: [ ../../.env.dev ]
     ports: [ "8080:8080" ]
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      - DATABASE_URL=postgresql://isekai:isekai@postgres:5432/isekai
     healthcheck:
       test: ["CMD","wget","-qO-","http://localhost:8080/health"]
       interval: 10s
       timeout: 5s
       retries: 5
+
   planner:
     build: ../../packages/planner
     env_file: [ ../../.env.dev ]
@@ -18,6 +40,7 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+
   sandbox:
     build: ../../packages/sandbox
     env_file: [ ../../.env.dev ]
@@ -27,9 +50,14 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+
   frontend:
     build: ../../packages/frontend
     env_file: [ ../../.env.dev ]
     ports: [ "3000:3000" ]
     depends_on: [ backend, planner, sandbox ]
+
 networks: { default: { name: isekai-dev } }
+
+volumes:
+  postgres_data:
