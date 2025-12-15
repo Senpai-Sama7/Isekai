@@ -11,8 +11,13 @@ import { requestLogger } from './middleware/requestLogger';
 import { errorHandler } from './middleware/errorHandler';
 import { logger } from './observability/logger';
 import { validateOrigins } from './utils/security';
+import { startTelemetry, metricsMiddleware } from '@isekai/observability';
 
 dotenv.config();
+
+// Initialize telemetry
+process.env.SERVICE_NAME = 'backend';
+startTelemetry('backend');
 
 const app: Application = express();
 const PORT = Number(process.env.PORT || process.env.BACKEND_PORT || 8080);
@@ -67,6 +72,9 @@ app.use(express.json({ limit: '10mb' }));
 // Routes
 app.use('/api/apps', writeRateLimit as any, appRouter);
 app.use('/api/health', healthRouter);
+
+// Metrics endpoint
+app.get('/metrics', metricsMiddleware());
 
 // Error handler
 app.use(errorHandler);

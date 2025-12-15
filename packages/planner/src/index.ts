@@ -6,8 +6,13 @@ import { IntentAnalyzer } from './services/intentAnalyzer';
 import { CodeGenerator } from './services/codeGenerator';
 import { validateAnalyze, validateInfer } from './middleware/validation';
 import dotenv from 'dotenv';
+import { startTelemetry, logger } from '@isekai/observability';
 
 dotenv.config();
+
+// Initialize telemetry
+process.env.SERVICE_NAME = 'planner';
+startTelemetry('planner');
 
 const app: Application = express();
 const PORT = Number(process.env.PORT || process.env.PLANNER_PORT || 8090);
@@ -44,6 +49,7 @@ const plannerRateLimit = rateLimit({
 app.use(express.json({ limit: '5mb' }));
 
 app.post('/analyze', plannerRateLimit as any, validateAnalyze, async (req: Request, res: Response) => {
+  const requestTracker = logger.startRequest('POST', '/analyze');
   try {
     const { prompt, context } = req.body;
 
@@ -56,13 +62,20 @@ app.post('/analyze', plannerRateLimit as any, validateAnalyze, async (req: Reque
       plan: intent.plan,
       code
     });
+    requestTracker.end('200');
   } catch (error) {
-    console.error('Error analyzing prompt:', error);
+    logger.error('Error analyzing prompt:', { 
+      error: (error as Error).message, 
+      stack: (error as Error).stack,
+      prompt: req.body.prompt // Log just the prompt for context
+    });
+    requestTracker.end('500');
     res.status(500).json({ error: 'Failed to analyze prompt' });
   }
 });
 
 app.post('/infer', plannerRateLimit as any, validateInfer, async (req: Request, res: Response) => {
+  const requestTracker = logger.startRequest('POST', '/infer');
   try {
     const { action, context, history } = req.body;
     
@@ -72,8 +85,13 @@ app.post('/infer', plannerRateLimit as any, validateInfer, async (req: Request, 
       suggestions,
       confidence: suggestions.length > 0 ? suggestions[0].confidence : 0
     });
+    requestTracker.end('200');
   } catch (error) {
-    console.error('Error inferring from action:', error);
+    logger.error('Error inferring from action:', { 
+      error: (error as Error).message, 
+      stack: (error as Error).stack 
+    });
+    requestTracker.end('500');
     res.status(500).json({ error: 'Failed to infer from action' });
   }
 });
@@ -84,7 +102,7 @@ app.get('/health', (req: Request, res: Response) => {
 
 if (require.main === module) {
   app.listen(PORT, () => {
-    console.log(`Planner service running on http://localhost:${PORT}`);
+    logger.info(`Planner service running on http://localhost:${PORT}`, { port: PORT });
   });
 }
 

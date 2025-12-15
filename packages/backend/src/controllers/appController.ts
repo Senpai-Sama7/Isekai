@@ -4,6 +4,7 @@ import { PlannerService } from '../services/plannerService';
 import { SandboxService } from '../services/sandboxService';
 import { logger } from '../observability/logger';
 import { safeJsonParse } from '../utils/security';
+import { ResilienceService } from '../services/resilienceService';
 import type {
   AppResponse,
   AppCode,
@@ -15,11 +16,13 @@ export class AppController {
   private db: Database;
   private plannerService: PlannerService;
   private sandboxService: SandboxService;
+  private resilienceService: ResilienceService;
 
   constructor() {
     this.db = Database.getInstance();
     this.plannerService = new PlannerService();
     this.sandboxService = new SandboxService();
+    this.resilienceService = new ResilienceService();
   }
 
   async generateApp(prompt: string, context?: any, correlationId = 'unknown'): Promise<AppResponse> {
@@ -40,12 +43,44 @@ export class AppController {
 
     this.db.createApp(app);
 
-    // Generate code via planner service
+    // Generate code via planner service with resilience
     try {
-      const result = await this.plannerService.analyze(prompt, context, correlationId);
+      const result = await this.resilienceService.executeWithResilience(
+        'planner-analyze',
+        () => this.plannerService.analyze(prompt, context, correlationId),
+        {
+          retry: {
+            maxRetries: 3,
+            baseDelay: 1000,
+            maxDelay: 10000,
+            backoffMultiplier: 2
+          },
+          circuitBreaker: {
+            failureThreshold: 5,
+            timeout: 60000,
+            resetTimeout: 30000
+          }
+        }
+      );
 
-      // Execute in sandbox
-      const sandboxResult = await this.sandboxService.execute(appId, result.code.files, correlationId);
+      // Execute in sandbox with resilience
+      const sandboxResult = await this.resilienceService.executeWithResilience(
+        'sandbox-execute',
+        () => this.sandboxService.execute(appId, result.code.files, correlationId),
+        {
+          retry: {
+            maxRetries: 2,
+            baseDelay: 2000,
+            maxDelay: 15000,
+            backoffMultiplier: 2
+          },
+          circuitBreaker: {
+            failureThreshold: 3,
+            timeout: 60000,
+            resetTimeout: 30000
+          }
+        }
+      );
       
       // Update app with results
       this.db.updateApp(appId, {
@@ -70,6 +105,7 @@ export class AppController {
         correlationId,
         errorMessage: (error as Error).message,
         stack: (error as Error).stack,
+        circuitOpen: this.resilienceService.isCircuitOpen('planner-analyze') || this.resilienceService.isCircuitOpen('sandbox-execute')
       });
       throw error;
     }
@@ -124,17 +160,33 @@ export class AppController {
     if (!app) return null;
 
     try {
-      let newCode;
+      let newCode: any;
 
       if (prompt) {
         const currentCode = safeJsonParse<AppCode>(app.code, { files: {} });
         const metadata = safeJsonParse<AppMetadata>(app.metadata, {});
 
-        const result = await this.plannerService.analyzeModification(
-          prompt,
-          currentCode,
-          metadata,
-          correlationId
+        const result = await this.resilienceService.executeWithResilience(
+          'planner-analyze-modification',
+          () => this.plannerService.analyzeModification(
+            prompt,
+            currentCode,
+            metadata,
+            correlationId
+          ),
+          {
+            retry: {
+              maxRetries: 3,
+              baseDelay: 1000,
+              maxDelay: 10000,
+              backoffMultiplier: 2
+            },
+            circuitBreaker: {
+              failureThreshold: 5,
+              timeout: 60000,
+              resetTimeout: 30000
+            }
+          }
         );
         newCode = result.code.files;
       } else if (changes) {
@@ -143,8 +195,24 @@ export class AppController {
         return this.getApp(appId);
       }
 
-      // Update in sandbox
-      await this.sandboxService.update(appId, newCode, correlationId);
+      // Update in sandbox with resilience
+      await this.resilienceService.executeWithResilience(
+        'sandbox-update',
+        () => this.sandboxService.update(appId, newCode, correlationId),
+        {
+          retry: {
+            maxRetries: 2,
+            baseDelay: 2000,
+            maxDelay: 15000,
+            backoffMultiplier: 2
+          },
+          circuitBreaker: {
+            failureThreshold: 3,
+            timeout: 60000,
+            resetTimeout: 30000
+          }
+        }
+      );
       
       // Update database
       this.db.updateApp(appId, {
@@ -157,6 +225,7 @@ export class AppController {
         correlationId,
         errorMessage: (error as Error).message,
         stack: (error as Error).stack,
+        circuitOpen: this.resilienceService.isCircuitOpen('planner-analyze-modification') || this.resilienceService.isCircuitOpen('sandbox-update')
       });
       throw error;
     }
@@ -167,11 +236,29 @@ export class AppController {
     if (!app) return false;
 
     try {
-      await this.sandboxService.stop(appId, correlationId);
+      // Stop in sandbox with resilience
+      await this.resilienceService.executeWithResilience(
+        'sandbox-stop',
+        () => this.sandboxService.stop(appId, correlationId),
+        {
+          retry: {
+            maxRetries: 2,
+            baseDelay: 1000,
+            maxDelay: 5000,
+            backoffMultiplier: 1.5
+          },
+          circuitBreaker: {
+            failureThreshold: 3,
+            timeout: 30000,
+            resetTimeout: 15000
+          }
+        }
+      );
     } catch (error) {
       logger.warn('Error stopping app in sandbox', {
         correlationId,
         errorMessage: (error as Error).message,
+        circuitOpen: this.resilienceService.isCircuitOpen('sandbox-stop')
       });
     }
 
@@ -195,13 +282,29 @@ export class AppController {
       const metadata = safeJsonParse<AppMetadata>(app.metadata, {});
       const currentCode = safeJsonParse<AppCode>(app.code, { files: {} });
 
-      const result = await this.plannerService.infer({
-        action,
-        target,
-        data,
-        context: metadata,
-        currentCode
-      }, correlationId);
+      const result = await this.resilienceService.executeWithResilience(
+        'planner-infer',
+        () => this.plannerService.infer({
+          action,
+          target,
+          data,
+          context: metadata,
+          currentCode
+        }, correlationId),
+        {
+          retry: {
+            maxRetries: 2,
+            baseDelay: 500,
+            maxDelay: 5000,
+            backoffMultiplier: 2
+          },
+          circuitBreaker: {
+            failureThreshold: 5,
+            timeout: 60000,
+            resetTimeout: 30000
+          }
+        }
+      );
 
       const suggestions = (result.suggestions || []).map((suggestion: any) => {
         const id = suggestion.id || randomUUID();
@@ -228,6 +331,7 @@ export class AppController {
       logger.warn('Error inferring from action', {
         correlationId,
         errorMessage: (error as Error).message,
+        circuitOpen: this.resilienceService.isCircuitOpen('planner-infer')
       });
       return [];
     }
@@ -246,7 +350,24 @@ export class AppController {
     const currentCode = code.files || {};
     const updatedFiles = { ...currentCode, ...suggestion.changes };
 
-    await this.sandboxService.update(appId, updatedFiles, correlationId);
+    // Update in sandbox with resilience
+    await this.resilienceService.executeWithResilience(
+      'sandbox-update-suggestion',
+      () => this.sandboxService.update(appId, updatedFiles, correlationId),
+      {
+        retry: {
+          maxRetries: 2,
+          baseDelay: 2000,
+          maxDelay: 15000,
+          backoffMultiplier: 2
+        },
+        circuitBreaker: {
+          failureThreshold: 3,
+          timeout: 60000,
+          resetTimeout: 30000
+        }
+      }
+    );
 
     this.db.updateApp(appId, {
       code: JSON.stringify({ files: updatedFiles })

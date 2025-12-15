@@ -60,6 +60,8 @@
 - Retry logic with backoff
 - Database optimization
 - Graceful degradation
+- Enhanced observability with Prometheus metrics
+- Distributed tracing with OpenTelemetry
 
 </td>
 </tr>
@@ -464,7 +466,8 @@ graph TD
 - ✅ **CORS Protection** - Validated origin checking
 - ✅ **Rate Limiting** - Per-IP request throttling
 - ✅ **Resource Limits** - File size & count restrictions
-- ✅ **Sandboxed Execution** - Isolated runtime environment
+- ✅ **Sandboxed Execution** - Isolated runtime environment with `--ignore-scripts` flag
+- ✅ **Dependency Validation** - Allowlist/blocklist for safe package installation
 - ✅ **Graceful Degradation** - Circuit breaker patterns
 
 ---

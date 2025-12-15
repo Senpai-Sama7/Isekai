@@ -65,6 +65,105 @@ export class Database {
     }
   }
 
+  /**
+   * Validates app data to prevent malicious content
+   */
+  private validateAppData(app: App): void {
+    if (!app.id || typeof app.id !== 'string' || app.id.length > 100) {
+      throw new Error('Invalid app ID');
+    }
+
+    // Validate UUID format
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+    if (!uuidRegex.test(app.id)) {
+      throw new Error('Invalid UUID format for app ID');
+    }
+
+    if (!app.name || typeof app.name !== 'string' || app.name.length > 200) {
+      throw new Error('Invalid app name');
+    }
+
+    if (!app.prompt || typeof app.prompt !== 'string' || app.prompt.length > 10000) {
+      throw new Error('Invalid app prompt');
+    }
+
+    // Check for potentially dangerous characters in prompt
+    if (app.prompt.includes('DROP ') || app.prompt.includes('DELETE ') || 
+        app.prompt.includes('UPDATE ') || app.prompt.includes('INSERT ')) {
+      throw new Error('Potentially dangerous SQL keywords in prompt');
+    }
+
+    if (!app.status || !['generating', 'running', 'stopped', 'error'].includes(app.status)) {
+      throw new Error('Invalid app status');
+    }
+
+    if (app.previewUrl && (typeof app.previewUrl !== 'string' || app.previewUrl.length > 500)) {
+      throw new Error('Invalid preview URL');
+    }
+
+    // Validate code and metadata are valid JSON strings
+    try {
+      JSON.parse(app.code);
+    } catch (e) {
+      throw new Error('Invalid code JSON format');
+    }
+
+    try {
+      JSON.parse(app.metadata);
+    } catch (e) {
+      throw new Error('Invalid metadata JSON format');
+    }
+
+    // Validate dates
+    if (isNaN(Date.parse(app.createdAt)) || isNaN(Date.parse(app.updatedAt))) {
+      throw new Error('Invalid date format');
+    }
+  }
+
+  /**
+   * Validates suggestion data to prevent malicious content
+   */
+  private validateSuggestionData(suggestion: SuggestionRecord, appId: string): void {
+    if (!suggestion.id || typeof suggestion.id !== 'string' || suggestion.id.length > 100) {
+      throw new Error('Invalid suggestion ID');
+    }
+
+    // Validate UUID format for suggestion ID
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+    if (!uuidRegex.test(suggestion.id)) {
+      throw new Error('Invalid UUID format for suggestion ID');
+    }
+
+    if (!suggestion.appId || typeof suggestion.appId !== 'string' || suggestion.appId !== appId) {
+      throw new Error('Invalid or mismatched app ID for suggestion');
+    }
+
+    if (!suggestion.title || typeof suggestion.title !== 'string' || suggestion.title.length > 500) {
+      throw new Error('Invalid suggestion title');
+    }
+
+    if (!suggestion.description || typeof suggestion.description !== 'string' || suggestion.description.length > 2000) {
+      throw new Error('Invalid suggestion description');
+    }
+
+    // Validate changes object
+    if (typeof suggestion.changes !== 'object' || suggestion.changes === null) {
+      throw new Error('Invalid changes object in suggestion');
+    }
+
+    // Check for potentially dangerous content in changes
+    const changesStr = JSON.stringify(suggestion.changes);
+    if (changesStr.includes('DROP ') || changesStr.includes('DELETE ') || 
+        changesStr.includes('UPDATE ') || changesStr.includes('INSERT ')) {
+      throw new Error('Potentially dangerous SQL keywords in changes');
+    }
+
+    // Validate date
+    if (isNaN(Date.parse(suggestion.createdAt))) {
+      throw new Error('Invalid date format in suggestion');
+    }
+  }
+
   private initTables() {
     this.db.exec(`
       CREATE TABLE IF NOT EXISTS apps (
@@ -112,6 +211,9 @@ export class Database {
   }
 
   createApp(app: App): App {
+    // Validate input data before insertion
+    this.validateAppData(app);
+    
     const stmt = this.db.prepare(`
       INSERT INTO apps (id, name, prompt, status, previewUrl, code, metadata, createdAt, updatedAt)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
@@ -151,6 +253,15 @@ export class Database {
     const app = this.getApp(id);
     if (!app) return undefined;
 
+    // Validate the update data
+    const updatedApp: App = {
+      ...app,
+      ...updates,
+      updatedAt: new Date().toISOString()
+    };
+    
+    this.validateAppData(updatedApp);
+
     const fields: string[] = [];
     const values: any[] = [];
 
@@ -183,6 +294,11 @@ export class Database {
     if (suggestions.length === 0) {
       this.clearSuggestions(appId);
       return;
+    }
+
+    // Validate each suggestion before saving
+    for (const suggestion of suggestions) {
+      this.validateSuggestionData(suggestion, appId);
     }
 
     const insert = this.db.prepare(`

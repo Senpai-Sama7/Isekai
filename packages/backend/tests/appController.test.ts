@@ -565,7 +565,7 @@ describe('AppController', () => {
   describe('generateAppName', () => {
     it('should generate proper case name from prompt', () => {
       const testCases = [
-        { input: 'create a csv viewer', expected: 'Create A Csv' },
+        { input: 'create a csv viewer', expected: 'Create Csv Viewer' },
         { input: 'BUILD TODO APP', expected: 'Build Todo App' },
         { input: 'Make markdown editor with preview', expected: 'Make Markdown Editor' }
       ];

@@ -39,6 +39,9 @@ describe('Local planner and sandbox integration', () => {
     const app = await controller.generateApp('Create a CSV viewer named Finance Lens');
 
     expect(app.id).toBeDefined();
+    if (!app.previewUrl) {
+      throw new Error('Expected local sandbox execution to return a preview URL');
+    }
     expect(app.previewUrl).toMatch(/^file:\/\//);
 
     const previewPath = app.previewUrl.replace('file://', '');

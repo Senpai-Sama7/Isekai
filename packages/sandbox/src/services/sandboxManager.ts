@@ -1,6 +1,6 @@
 import { spawn, ChildProcess } from 'child_process';
 import { join } from 'path';
-import { mkdirSync, writeFileSync, existsSync, rmSync } from 'fs';
+import { mkdirSync, writeFileSync, existsSync, rmSync, readFileSync } from 'fs';
 import kill from 'tree-kill';
 
 interface SandboxApp {
@@ -18,6 +18,43 @@ interface ResourceLimits {
   maxCPUPercent: number;
   executionTimeoutMs: number;
 }
+
+// Security configuration for dependency validation
+const SAFE_DEPENDENCIES_ALLOWLIST = [
+  // Core React dependencies
+  'react', 'react-dom', 'react-scripts',
+  // Common utilities
+  'axios', 'lodash', 'moment', 'date-fns', 'uuid', 'qs',
+  // UI libraries
+  'styled-components', '@emotion/react', '@emotion/styled',
+  // Data processing
+  'papaparse', 'marked', 'highlight.js',
+  // Form handling
+  'formik', 'yup', 'react-hook-form',
+  // State management
+  'redux', 'react-redux', 'zustand', '@reduxjs/toolkit',
+  // Routing
+  'react-router-dom',
+  // Testing (shouldn't be in production, but potentially in generated apps)
+  '@testing-library/react', '@testing-library/jest-dom'
+];
+
+const UNSAFE_DEPENDENCIES_BLOCKLIST = [
+  // Dangerous packages that can execute system commands
+  'child_process', 'exec', 'shelljs', 'node-gyp',
+  // File system access
+  'fs', 'fs-extra', 'glob',
+  // Network access
+  'net', 'dgram', 'dns',
+  // Process management
+  'worker_threads', 'cluster',
+  // Package management
+  'npm', 'yarn', 'pnpm',
+  // System access
+  'os', 'process', 'vm', 'module', 'require',
+  // Unsafe packages
+  'eval', 'dynamic-import', 'vm2', 'sandbox', 'node-vm'
+];
 
 export class SandboxManager {
   private apps: Map<string, SandboxApp> = new Map();
@@ -40,6 +77,53 @@ export class SandboxManager {
     };
   }
 
+  /**
+   * Validates dependencies to ensure they are safe to install
+   * @param appDir - Application directory
+   * @param dependencies - Dependencies to validate
+   */
+  private async validateDependencies(appDir: string, dependencies?: any): Promise<void> {
+    if (!dependencies) {
+      return; // No dependencies to validate
+    }
+
+    const packageJsonPath = join(appDir, 'package.json');
+    if (!existsSync(packageJsonPath)) {
+      throw new Error('No package.json found in app directory');
+    }
+
+    const packageJson = JSON.parse(readFileSync(packageJsonPath, 'utf8'));
+    const allDeps = {
+      ...packageJson.dependencies || {},
+      ...packageJson.devDependencies || {}
+    };
+
+    for (const [depName, depVersion] of Object.entries(allDeps)) {
+      // Check against blocklist first
+      if (UNSAFE_DEPENDENCIES_BLOCKLIST.some(unsafeDep => 
+        depName.includes(unsafeDep) || unsafeDep.includes(depName))) {
+        throw new Error(`Blocked dependency: ${depName} - contains potentially unsafe package`);
+      }
+
+      // If allowlist is enabled and the dependency is not in it, block it
+      if (process.env.SANDBOX_STRICT_MODE === 'true' && 
+          !SAFE_DEPENDENCIES_ALLOWLIST.some(safeDep => 
+            depName.includes(safeDep) || safeDep.includes(depName))) {
+        throw new Error(`Dependency not in allowlist: ${depName} - only safe dependencies are permitted in strict mode`);
+      }
+
+      // Validate version format to prevent malicious version strings
+      if (typeof depVersion !== 'string' || depVersion.length > 100) {
+        throw new Error(`Invalid dependency version format for ${depName}: ${depVersion}`);
+      }
+
+      // Check for potentially malicious version strings
+      if (depVersion.includes('!') || depVersion.includes('|') || depVersion.includes(';') || depVersion.includes('&')) {
+        throw new Error(`Potentially malicious dependency version for ${depName}: ${depVersion}`);
+      }
+    }
+  }
+
   async execute(appId: string, files: Record<string, string>, dependencies?: any, config?: any): Promise<any> {
     const port = this.nextPort++;
     const appDir = join(this.workspaceDir, appId);
@@ -59,6 +143,9 @@ export class SandboxManager {
       }
       writeFileSync(fullPath, content);
     });
+
+    // Validate dependencies before installation
+    await this.validateDependencies(appDir, dependencies);
 
     const app: SandboxApp = {
       id: appId,
@@ -108,12 +195,22 @@ export class SandboxManager {
     if (!app) throw new Error('App not found');
 
     return new Promise((resolve, reject) => {
-      // Install dependencies
-      app.logs.push('Installing dependencies...');
-      const install = spawn('npm', ['install'], {
+      // Install dependencies with security flags to prevent malicious script execution
+      app.logs.push('Installing dependencies securely...');
+      const installArgs = ['install', '--ignore-scripts', '--no-audit', '--no-fund', '--production'];
+      
+      // Add additional security validation for dependencies
+      const install = spawn('npm', installArgs, {
         cwd: appDir,
-        shell: true,
-        env: { ...process.env, PORT: port.toString() }
+        shell: false, // Prevent shell injection
+        env: { 
+          ...process.env, 
+          PATH: process.env.PATH,
+          PORT: port.toString(),
+          HOME: appDir, // Limit npm cache to app directory
+          NPM_CONFIG_CACHE: join(appDir, 'npm-cache'),
+          NPM_CONFIG_PREFIX: join(appDir, 'npm-global')
+        }
       });
 
       install.stdout.on('data', (data) => {
@@ -132,14 +229,16 @@ export class SandboxManager {
 
         app.logs.push('Starting app...');
         
-        // Start the app
-        const startProcess = spawn('npm', ['start'], {
+        // Start the app with security restrictions
+        const startProcess = spawn('npm', ['start', '--ignore-scripts'], {
           cwd: appDir,
-          shell: true,
+          shell: false, // Prevent shell injection
           env: { 
             ...process.env, 
+            PATH: process.env.PATH,
             PORT: port.toString(),
-            BROWSER: 'none' // Don't open browser
+            BROWSER: 'none', // Don't open browser
+            NODE_ENV: 'production'
           },
           detached: false
         });
